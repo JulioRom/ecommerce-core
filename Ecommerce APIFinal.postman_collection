@@ -1,0 +1,286 @@
+{
+	"info": {
+		"_postman_id": "a8a13a96-bd1f-4423-ab1f-220817238dad",
+		"name": "Ecommerce API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "12122436"
+	},
+	"item": [
+		{
+			"name": "Autenticación",
+			"item": [
+				{
+					"name": "Generar Token (Login)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.text();",
+									"pm.globals.set(\"auth_token\", jsonData);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/auth/login?username=admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							],
+							"query": [
+								{
+									"key": "username",
+									"value": "admin"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Productos",
+			"item": [
+				{
+					"name": "Agregar Producto",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoProducto\": \"PROD002\",\n  \"precioUnitario\": 2000,\n  \"stock\": 30\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/productos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar Productos",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/productos",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"productos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Producto por Código",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/productos/PROD002",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"productos",
+								"PROD002"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Carrito de Compra",
+			"item": [
+				{
+					"name": "Agregar Producto al Carrito con Cantidad",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"codigoProducto\": \"PROD001\",\n  \"cantidad\": 3\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/carrito/usuario123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carrito",
+								"usuario123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener Carrito de Usuario",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/carrito/usuario123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carrito",
+								"usuario123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Eliminar Producto del Carrito",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/carrito/usuario123/PROD001",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carrito",
+								"usuario123",
+								"PROD001"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Vaciar Carrito de Usuario",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/carrito/usuario123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"carrito",
+								"usuario123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Realizar Compra",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/compra/usuario123",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"compra",
+								"usuario123"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "auth_token",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
