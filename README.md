@@ -34,7 +34,7 @@ cd ecommerce-app
 #### 📌 PostgreSQL
 Crea la base de datos en PostgreSQL:
 ```sql
-CREATE DATABASE ecommerce;
+    CREATE DATABASE ecommerce;
 ```
 Modifica `application.yml` con las credenciales:
 ```yaml

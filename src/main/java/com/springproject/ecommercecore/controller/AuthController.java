@@ -1,6 +1,5 @@
 package com.springproject.ecommercecore.controller;
 
-import com.springproject.ecommercecore.model.postgresql.Usuario;
 import com.springproject.ecommercecore.security.AuthService;
 import com.springproject.ecommercecore.security.dto.AuthRequest;
 import com.springproject.ecommercecore.security.dto.AuthResponse;
