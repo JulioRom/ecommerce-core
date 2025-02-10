@@ -1,5 +1,6 @@
 package com.springproject.ecommercecore.service;
 
+import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.repository.postgresql.DetalleCompraRepository;
 import com.springproject.ecommercecore.repository.postgresql.OrdenCompraRepository;
 import com.springproject.ecommercecore.model.mongodb.*;
@@ -21,44 +22,34 @@ public class CompraService {
 
     // ✅ Generar compra a partir del carrito con cantidades
     public String generarCompra(String idUsuario) {
-        Optional<CarritoCompra> carritoOpt = carritoCompraService.obtenerCarrito(idUsuario);
-        if (carritoOpt.isEmpty()) {
-            return "El carrito de compras no existe.";
-        }
+        // Obtener el carrito del usuario
+        CarritoCompra carrito = carritoCompraService.obtenerCarrito(idUsuario);
 
-        CarritoCompra carrito = carritoOpt.get();
         if (carrito.getProductos().isEmpty()) {
-            return "El carrito está vacío.";
+            throw new RecursoNoEncontradoException("El carrito está vacío. No se puede generar la compra.");
         }
 
-        // Validar stock de los productos y preparar los detalles de compra
+        // Validar stock y crear detalles de compra
         List<DetalleCompra> detalles = carrito.getProductos().stream().map(productoCarrito -> {
-            Optional<Producto> productoOpt = productoService.buscarPorCodigo(productoCarrito.getCodigoProducto());
+            Producto producto = productoService.buscarPorCodigo(productoCarrito.getCodigoProducto());
 
-            if (productoOpt.isEmpty()) {
-                throw new RuntimeException("Producto no encontrado: " + productoCarrito.getCodigoProducto());
-            }
-
-            Producto producto = productoOpt.get();
-            int cantidadSolicitada = productoCarrito.getCantidad();
-
-            if (producto.getStock() < cantidadSolicitada) {
+            if (producto.getStock() < productoCarrito.getCantidad()) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + productoCarrito.getCodigoProducto());
             }
 
-            int totalDetalle = cantidadSolicitada * producto.getPrecioUnitario();
+            int totalDetalle = productoCarrito.getCantidad() * producto.getPrecioUnitario();
 
             // Actualizar stock
-            productoService.actualizarStock(producto.getCodigoProducto(), cantidadSolicitada);
+            productoService.actualizarStock(producto.getCodigoProducto(), productoCarrito.getCantidad());
 
-            return new DetalleCompra(null, producto, cantidadSolicitada, totalDetalle, null);
+            return new DetalleCompra(null, producto, productoCarrito.getCantidad(), totalDetalle, null);
         }).toList();
 
         // Crear la orden de compra
         OrdenCompra orden = new OrdenCompra();
         orden.setFechaEmision(new Date());
-        orden.setFechaEntrega(new Date());
-        orden.setFechaSolicitada(new Date());
+        orden.setFechaEntrega(new Date());  // 🚨 Ajustar si es necesario
+        orden.setFechaSolicitada(new Date());  // 🚨 Ajustar si es necesario
         orden = ordenCompraRepository.save(orden);
 
         // Asociar detalles a la orden y guardarlos en la base de datos
@@ -67,7 +58,7 @@ public class CompraService {
             detalleCompraRepository.save(detalle);
         }
 
-        // ✅ Vaciar el carrito después de procesar la compra
+        // Vaciar el carrito después de procesar la compra
         carritoCompraService.vaciarCarrito(idUsuario);
 
         return "Compra realizada con éxito. ID de Orden: " + orden.getId();

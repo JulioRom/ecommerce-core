@@ -1,26 +1,33 @@
 package com.springproject.ecommercecore.security;
 
+import com.springproject.ecommercecore.model.postgresql.Usuario;
+import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    private final UsuarioRepository usuarioRepository;
+
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // 🔹 Aquí podrías consultar una base de datos de usuarios en el futuro
-        if (!username.equals("admin")) {
-            throw new UsernameNotFoundException("Usuario no encontrado: " + username);
-        }
+        Usuario usuario = usuarioRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
-        // 🔹 Devolver un usuario en memoria con la contraseña codificada
-        return new User("admin", "{noop}admin", new ArrayList<>());
+        return new User(
+                usuario.getUsername(),
+                usuario.getPassword(),
+                List.of(new SimpleGrantedAuthority(usuario.getRole()))
+        );
     }
 }

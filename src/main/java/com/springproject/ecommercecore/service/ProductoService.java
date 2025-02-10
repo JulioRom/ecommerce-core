@@ -1,5 +1,6 @@
 package com.springproject.ecommercecore.service;
 
+import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import com.springproject.ecommercecore.repository.postgresql.ProductoRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,9 @@ public class ProductoService {
     }
 
     // Buscar producto por código
-    public Optional<Producto> buscarPorCodigo(String codigoProducto) {
-        return Optional.ofNullable(productoRepository.findByCodigoProducto(codigoProducto));
+    public Producto buscarPorCodigo(String codigoProducto) {
+        return Optional.ofNullable(productoRepository.findByCodigoProducto(codigoProducto))
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado: " + codigoProducto));
     }
 
     // Restar stock de un producto
@@ -40,25 +42,18 @@ public class ProductoService {
     }
 
     // ✅ Actualizar un producto existente
-    public Optional<Producto> actualizarProducto(String codigoProducto, Producto productoDetalles) {
-        Producto productoExistente = productoRepository.findByCodigoProducto(codigoProducto);
-        if (productoExistente == null) {
-            return Optional.empty();
-        }
+    public Producto actualizarProducto(String codigoProducto, Producto productoDetalles) {
+        Producto productoExistente = buscarPorCodigo(codigoProducto);
 
         productoExistente.setPrecioUnitario(productoDetalles.getPrecioUnitario());
         productoExistente.setStock(productoDetalles.getStock());
-        return Optional.of(productoRepository.save(productoExistente));
+
+        return productoRepository.save(productoExistente);
     }
 
     // ✅ Eliminar un producto
-    public boolean eliminarProducto(String codigoProducto) {
-        Producto producto = productoRepository.findByCodigoProducto(codigoProducto);
-        if (producto == null) {
-            return false;
-        }
-
+    public void eliminarProducto(String codigoProducto) {
+        Producto producto = buscarPorCodigo(codigoProducto);
         productoRepository.delete(producto);
-        return true;
     }
 }

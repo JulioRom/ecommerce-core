@@ -23,30 +23,27 @@ public class ProductoController {
 
     // Obtener producto por código
     @GetMapping("/{codigoProducto}")
-    public ResponseEntity<?> obtenerProducto(@PathVariable String codigoProducto) {
-        Optional<Producto> producto = productoService.buscarPorCodigo(codigoProducto);
-        return producto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Producto> obtenerProducto(@PathVariable String codigoProducto) {
+        return ResponseEntity.ok(productoService.buscarPorCodigo(codigoProducto));
     }
 
     // ✅ Agregar un producto (POST)
     @PostMapping
     public ResponseEntity<Producto> agregarProducto(@RequestBody Producto producto) {
-        Producto nuevoProducto = productoService.guardarProducto(producto);
-        return ResponseEntity.ok(nuevoProducto);
+        return ResponseEntity.ok(productoService.guardarProducto(producto));
     }
 
     // ✅ Actualizar un producto (PUT)
     @PutMapping("/{codigoProducto}")
-    public ResponseEntity<?> actualizarProducto(@PathVariable String codigoProducto, @RequestBody Producto producto) {
-        Optional<Producto> productoActualizado = productoService.actualizarProducto(codigoProducto, producto);
-        return productoActualizado.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable String codigoProducto, @RequestBody Producto productoDetalles) {
+        return ResponseEntity.ok(productoService.actualizarProducto(codigoProducto, productoDetalles));
     }
 
     // ✅ Eliminar un producto (DELETE)
     @DeleteMapping("/{codigoProducto}")
-    public ResponseEntity<String> eliminarProducto(@PathVariable String codigoProducto) {
-        boolean eliminado = productoService.eliminarProducto(codigoProducto);
-        return eliminado ? ResponseEntity.ok("Producto eliminado.") : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> eliminarProducto(@PathVariable String codigoProducto) {
+        productoService.eliminarProducto(codigoProducto);
+        return ResponseEntity.noContent().build();
     }
 
 }

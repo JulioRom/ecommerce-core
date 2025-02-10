@@ -13,8 +13,7 @@ public class CompraController {
 
     // Generar una compra a partir del carrito de un usuario
     @PostMapping("/{idUsuario}")
-    public ResponseEntity<String> realizarCompra(@PathVariable String idUsuario) {
-        String mensaje = compraService.generarCompra(idUsuario);
-        return ResponseEntity.ok(mensaje);
+    public ResponseEntity<String> generarCompra(@PathVariable String idUsuario) {
+        return ResponseEntity.ok(compraService.generarCompra(idUsuario));
     }
 }

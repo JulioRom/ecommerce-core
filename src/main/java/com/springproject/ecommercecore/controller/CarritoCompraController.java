@@ -17,29 +17,28 @@ public class CarritoCompraController {
 
     // ✅ Agregar producto con cantidad específica
     @PostMapping("/{idUsuario}")
-    public ResponseEntity<String> agregarProducto(@PathVariable String idUsuario, @RequestBody ProductoCarrito producto) {
+    public ResponseEntity<Void> agregarProducto(@PathVariable String idUsuario, @RequestBody ProductoCarrito producto) {
         carritoCompraService.agregarProducto(idUsuario, producto);
-        return ResponseEntity.ok("Producto agregado o actualizado en el carrito.");
+        return ResponseEntity.ok().build();
     }
 
     // ✅ Obtener carrito del usuario
     @GetMapping("/{idUsuario}")
-    public ResponseEntity<?> obtenerCarrito(@PathVariable String idUsuario) {
-        Optional<CarritoCompra> carrito = carritoCompraService.obtenerCarrito(idUsuario);
-        return carrito.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<CarritoCompra> obtenerCarrito(@PathVariable String idUsuario) {
+        return ResponseEntity.ok(carritoCompraService.obtenerCarrito(idUsuario));
     }
 
     // ✅ Eliminar un producto del carrito
     @DeleteMapping("/{idUsuario}/{codigoProducto}")
-    public ResponseEntity<String> eliminarProducto(@PathVariable String idUsuario, @PathVariable String codigoProducto) {
-        boolean eliminado = carritoCompraService.eliminarProducto(idUsuario, codigoProducto);
-        return eliminado ? ResponseEntity.ok("Producto eliminado del carrito.") : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> eliminarProducto(@PathVariable String idUsuario, @PathVariable String codigoProducto) {
+        carritoCompraService.eliminarProducto(idUsuario, codigoProducto);
+        return ResponseEntity.noContent().build();
     }
 
     // ✅ Vaciar el carrito completamente
     @DeleteMapping("/{idUsuario}")
-    public ResponseEntity<String> vaciarCarrito(@PathVariable String idUsuario) {
-        boolean vaciado = carritoCompraService.vaciarCarrito(idUsuario);
-        return vaciado ? ResponseEntity.ok("Carrito vaciado.") : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> vaciarCarrito(@PathVariable String idUsuario) {
+        carritoCompraService.vaciarCarrito(idUsuario);
+        return ResponseEntity.noContent().build();
     }
 }
