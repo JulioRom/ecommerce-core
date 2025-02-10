@@ -116,6 +116,14 @@ docker-compose down
 
 ---
 
+## 🧑‍💻 Autor
+
+- **Desarrollado por JulioRom**
+- 📧 **Correo:** [julioandrescampos@gmail.com](mailto:julioandrescampos@gmail.com)
+- 🔗 **GitHub:** [https://github.com/JulioRom](https://github.com/JulioRom)
+
+---
+
 ## 📜 Licencia
 Este proyecto es de código abierto y se distribuye bajo la licencia MIT.
 
