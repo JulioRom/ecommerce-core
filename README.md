@@ -116,6 +116,24 @@ docker-compose down
 
 ---
 
+## 🛠 Pruebas con Postman
+
+Para facilitar las pruebas de la API, se ha creado una **colección de Postman** que puedes importar y utilizar directamente.
+
+### **📥 Importar la colección de Postman**
+1. Descarga el archivo `Ecommerce_API.postman_collection.json` del repositorio.
+2. Abre **Postman** y ve a la pestaña **"Import"**.
+3. Selecciona **"Upload Files"** y elige el archivo `Ecommerce_API.postman_collection.json`.
+4. Postman importará automáticamente la colección con todos los endpoints.
+
+### **🔄 Configurar las variables en Postman**
+- **base_url** → `http://localhost:8080`
+- **auth_token** → Se generará automáticamente al hacer login.
+
+Después de realizar la autenticación (`POST /api/auth/login`), se almacenará el token JWT en la variable `auth_token` para que puedas hacer peticiones autenticadas sin copiar manualmente el token.
+
+---
+
 ## 🧑‍💻 Autor
 
 - **Desarrollado por JulioRom**
