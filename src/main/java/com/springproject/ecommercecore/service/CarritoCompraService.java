@@ -7,6 +7,7 @@ import com.springproject.ecommercecore.repository.mongodb.CarritoCompraRepositor
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Service
@@ -14,9 +15,10 @@ import java.util.Optional;
 public class CarritoCompraService {
     private final CarritoCompraRepository carritoCompraRepository;
 
-    // ✅ Agregar producto al carrito con cantidad específica
+    // Agregar producto al carrito con cantidad específica
     public void agregarProducto(String idUsuario, ProductoCarrito nuevoProducto) {
-        CarritoCompra carrito = carritoCompraRepository.findById(idUsuario).orElse(new CarritoCompra(idUsuario, new java.util.ArrayList<>()));
+        CarritoCompra carrito = carritoCompraRepository.findById(idUsuario).orElse(new CarritoCompra(null, idUsuario, new java.util.ArrayList<>(), LocalDateTime.now(), LocalDateTime.now()));
+
 
         Optional<ProductoCarrito> productoExistente = carrito.getProductos().stream()
                 .filter(p -> p.getCodigoProducto().equals(nuevoProducto.getCodigoProducto()))
@@ -31,13 +33,13 @@ public class CarritoCompraService {
         carritoCompraRepository.save(carrito);
     }
 
-    // ✅ Obtener el carrito de un usuario
+    // Obtener el carrito de un usuario
     public CarritoCompra obtenerCarrito(String idUsuario) {
         return carritoCompraRepository.findById(idUsuario)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Carrito de compras no encontrado para usuario: " + idUsuario));
     }
 
-    // ✅ Eliminar un producto del carrito
+    // Eliminar un producto del carrito
     public void eliminarProducto(String idUsuario, String codigoProducto) {
         CarritoCompra carrito = obtenerCarrito(idUsuario);
         boolean removed = carrito.getProductos().removeIf(p -> p.getCodigoProducto().equals(codigoProducto));
@@ -49,7 +51,7 @@ public class CarritoCompraService {
         carritoCompraRepository.save(carrito);
     }
 
-    // ✅ Vaciar el carrito completamente
+    // Vaciar el carrito completamente
     public void vaciarCarrito(String idUsuario) {
         if (!carritoCompraRepository.existsById(idUsuario)) {
             throw new RecursoNoEncontradoException("Carrito de compras no encontrado para usuario: " + idUsuario);

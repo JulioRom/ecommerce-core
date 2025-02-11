@@ -23,4 +23,16 @@ public class OrdenCompra {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date fechaSolicitada;
+
+    @ManyToOne
+    @JoinColumn(name = "id_usuario", nullable = false)
+    private Usuario usuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private EstadoOrden estado;
+
+    public enum EstadoOrden {
+        PENDIENTE, PAGADO, ENVIADO, ENTREGADO, CANCELADO
+    }
 }

@@ -8,6 +8,7 @@ import com.springproject.ecommercecore.model.postgresql.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -39,10 +40,17 @@ public class CompraService {
                 throw new RuntimeException("Stock insuficiente para el producto: " + productoCarrito.getCodigoProducto());
             }
 
-            int totalDetalle = productoCarrito.getCantidad() * producto.getPrecioUnitario();
+            BigDecimal totalDetalle = productoCarrito.getPrecioUnitario().multiply(BigDecimal.valueOf(productoCarrito.getCantidad()));
             productoService.actualizarStock(producto.getCodigoProducto(), productoCarrito.getCantidad());
 
-            return new DetalleCompra(null, producto, productoCarrito.getCantidad(), totalDetalle, null);
+            return new DetalleCompra(
+                    null,
+                    producto,
+                    productoCarrito.getCantidad(),
+                    productoCarrito.getPrecioUnitario(),
+                    totalDetalle.intValue(),
+                    new OrdenCompra()
+            );
         }).toList();
 
         // Crear la orden de compra

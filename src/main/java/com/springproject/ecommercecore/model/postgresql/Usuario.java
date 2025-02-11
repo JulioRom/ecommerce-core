@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import java.util.Collection;
 import java.util.Collections;
 
@@ -24,21 +23,28 @@ public class Usuario implements UserDetails {
     @Column(unique = true, nullable = false)
     private String username;
 
+    @Column(unique = true, nullable = false)
+    private String email;
+
     @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
     private String role; // "ROLE_ADMIN" o "ROLE_USER"
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean enabled = true; // Usuario activo por defecto
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean accountNonExpired = true; // La cuenta no ha expirado
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean accountNonLocked = true; // La cuenta no está bloqueada
 
+    @Builder.Default
     @Column(nullable = false)
     private boolean credentialsNonExpired = true; // Las credenciales no han expirado
 
@@ -67,4 +73,3 @@ public class Usuario implements UserDetails {
         return enabled;
     }
 }
-

@@ -3,25 +3,30 @@ package com.springproject.ecommercecore.controller;
 import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import com.springproject.ecommercecore.service.ProductoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/productos")
 @RequiredArgsConstructor
+@Tag(name = "Productos", description = "Operaciones relacionadas con los productos")
 public class ProductoController {
     private final ProductoService productoService;
 
-    // Obtener todos los productos
+    @Operation(summary = "Listar todos los productos")
     @GetMapping
     public ResponseEntity<List<Producto>> listarProductos() {
         return ResponseEntity.ok(productoService.listarProductos());
     }
 
-    // Obtener producto por código con manejo de error si no existe
+    @Operation(summary = "Obtener un producto por código")
     @GetMapping("/{codigoProducto}")
     public ResponseEntity<Producto> obtenerProducto(@PathVariable String codigoProducto) {
         Producto producto = productoService.buscarPorCodigo(codigoProducto);
@@ -31,16 +36,16 @@ public class ProductoController {
         return ResponseEntity.ok(producto);
     }
 
-    // ✅ Agregar un producto con validación
+    @Operation(summary = "Agregar un nuevo producto")
     @PostMapping
     public ResponseEntity<Producto> agregarProducto(@Valid @RequestBody Producto producto) {
-        if (producto.getCodigoProducto() == null || producto.getPrecioUnitario() <= 0 || producto.getStock() < 0) {
+        if (producto.getCodigoProducto() == null || producto.getPrecioUnitario().compareTo(BigDecimal.ZERO) <= 0 || producto.getStock() < 0) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(productoService.guardarProducto(producto));
     }
 
-    // ✅ Actualizar un producto con validación
+    @Operation(summary = "Actualizar un producto existente")
     @PutMapping("/{codigoProducto}")
     public ResponseEntity<Producto> actualizarProducto(@PathVariable String codigoProducto, @Valid @RequestBody Producto productoDetalles) {
         Producto productoExistente = productoService.buscarPorCodigo(codigoProducto);
@@ -50,7 +55,7 @@ public class ProductoController {
         return ResponseEntity.ok(productoService.actualizarProducto(codigoProducto, productoDetalles));
     }
 
-    // ✅ Eliminar un producto con validación
+    @Operation(summary = "Eliminar un producto")
     @DeleteMapping("/{codigoProducto}")
     public ResponseEntity<Void> eliminarProducto(@PathVariable String codigoProducto) {
         Producto producto = productoService.buscarPorCodigo(codigoProducto);

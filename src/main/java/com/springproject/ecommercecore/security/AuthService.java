@@ -47,8 +47,8 @@ public class AuthService {
         Usuario newUser = Usuario.builder()
                 .username(request.getUsername())
                 .password(passwordEncoder.encode(request.getPassword()))
+                .email(request.getEmail())
                 .role("ROLE_" + request.getRole().toUpperCase())
-                .enabled(true) // Usuario habilitado por defecto
                 .build();
 
         usuarioRepository.save(newUser);
