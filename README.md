@@ -30,8 +30,8 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 
 ### **1️⃣ Clonar el repositorio**
 ```bash
-git clone https://github.com/tu-repositorio/ecommerce-api.git
-cd ecommerce-api
+git clone https://github.com/JulioRom/ecommerce-core.git
+cd ecommerce-core
 ```
 
 ### **2️⃣ Configurar Base de Datos**
