@@ -1,9 +1,11 @@
 package com.springproject.ecommercecore.controller;
 
+import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.mongodb.CarritoCompra;
 import com.springproject.ecommercecore.model.mongodb.ProductoCarrito;
 import com.springproject.ecommercecore.service.CarritoCompraService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +25,8 @@ public class CarritoCompraController {
     // ✅ Obtener carrito del usuario
     @GetMapping("/{idUsuario}")
     public ResponseEntity<CarritoCompra> obtenerCarrito(@PathVariable String idUsuario) {
-        return ResponseEntity.ok(carritoCompraService.obtenerCarrito(idUsuario));
+        CarritoCompra carrito = carritoCompraService.obtenerCarrito(idUsuario);
+        return ResponseEntity.ok(carrito);
     }
 
     // ✅ Eliminar un producto del carrito

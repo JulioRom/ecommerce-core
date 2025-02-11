@@ -1,3 +1,4 @@
+// UserDetailsServiceImpl.java (Mejoras implementadas)
 package com.springproject.ecommercecore.security;
 
 import com.springproject.ecommercecore.model.postgresql.Usuario;
@@ -21,6 +22,10 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
+
+        if (!usuario.isEnabled()) {
+            throw new UsernameNotFoundException("Usuario inhabilitado: " + username);
+        }
 
         return new User(
                 usuario.getUsername(),

@@ -60,6 +60,7 @@ class AuthControllerTest {
         mockMvc.perform(post("/api/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized()) // 401 esperado
+                .andExpect(content().string("Error de autenticación: Credenciales inválidas"));
     }
 }

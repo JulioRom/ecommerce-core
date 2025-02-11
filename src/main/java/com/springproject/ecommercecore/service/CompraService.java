@@ -23,11 +23,13 @@ public class CompraService {
     // ✅ Generar compra a partir del carrito con cantidades
     public String generarCompra(String idUsuario) {
         // Obtener el carrito del usuario
-        CarritoCompra carrito = carritoCompraService.obtenerCarrito(idUsuario);
+        Optional<CarritoCompra> carritoOpt = Optional.ofNullable(carritoCompraService.obtenerCarrito(idUsuario));
 
-        if (carrito.getProductos().isEmpty()) {
+        if (carritoOpt.isEmpty() || carritoOpt.get().getProductos().isEmpty()) {
             throw new RecursoNoEncontradoException("El carrito está vacío. No se puede generar la compra.");
         }
+
+        CarritoCompra carrito = carritoOpt.get();
 
         // Validar stock y crear detalles de compra
         List<DetalleCompra> detalles = carrito.getProductos().stream().map(productoCarrito -> {
@@ -38,8 +40,6 @@ public class CompraService {
             }
 
             int totalDetalle = productoCarrito.getCantidad() * producto.getPrecioUnitario();
-
-            // Actualizar stock
             productoService.actualizarStock(producto.getCodigoProducto(), productoCarrito.getCantidad());
 
             return new DetalleCompra(null, producto, productoCarrito.getCantidad(), totalDetalle, null);

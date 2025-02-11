@@ -3,6 +3,7 @@ package com.springproject.ecommercecore.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -14,7 +15,12 @@ import java.util.stream.Collectors;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET_KEY = "MiClaveSecretaParaJWTDe64CaracteresDeLargoSeguro1234567890!";
+
+    @Value("${jwt.secret}")
+    private String secretKey; // Se obtiene la clave desde application.properties o variables de entorno
+
+    @Value("${jwt.expiration}")
+    private long jwtExpirationMs; // Se configura el tiempo de expiración desde properties
 
     public String generateToken(UserDetails userDetails) {
         Set<String> roles = userDetails.getAuthorities().stream()
@@ -23,9 +29,9 @@ public class JwtUtil {
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
-                .claim("roles", userDetails.getAuthorities())
+                .claim("roles", roles)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1 hora
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(getSigningKey())
                 .compact();
     }
@@ -53,6 +59,6 @@ public class JwtUtil {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(SECRET_KEY));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));
     }
 }

@@ -93,13 +93,17 @@ class CompraServiceTest {
 
     @Test
     void testGenerarCompra_CarritoVacio() {
-        when(carritoCompraService.obtenerCarrito("usuario123")).thenReturn(carritoEjemplo);
+        // Simular un carrito vacío
+        CarritoCompra carritoVacio = new CarritoCompra("usuario123", new ArrayList<>());
+
+        when(carritoCompraService.obtenerCarrito("usuario123")).thenReturn(carritoVacio);
 
         assertThatThrownBy(() -> compraService.generarCompra("usuario123"))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("El carrito está vacío. No se puede generar la compra.");
 
         verify(carritoCompraService, times(1)).obtenerCarrito("usuario123");
+        verifyNoInteractions(productoService, ordenCompraRepository, detalleCompraRepository);
     }
 
     @Test
@@ -120,7 +124,6 @@ class CompraServiceTest {
     @Test
     void testGenerarCompra_StockInsuficiente() {
         productoEjemplo.setStock(1); // Stock menor a la cantidad requerida
-
         when(carritoCompraService.obtenerCarrito("usuario123")).thenReturn(carritoEjemplo);
         when(productoService.buscarPorCodigo("PROD001")).thenReturn(productoEjemplo);
 
