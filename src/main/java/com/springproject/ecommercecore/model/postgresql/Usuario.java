@@ -1,56 +1,62 @@
 package com.springproject.ecommercecore.model.postgresql;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "usuarios")
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
-@Builder
 public class Usuario implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     private String username;
 
-    @Column(unique = true, nullable = false)
-    private String email;
-
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
-    private String role; // "ROLE_ADMIN" o "ROLE_USER"
+    @Column(unique = true, nullable = false)
+    private String email;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean enabled = true; // Usuario activo por defecto
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "usuario_roles", joinColumns = @JoinColumn(name = "usuario_id"))
+    @Column(name = "role")
+    private Set<String> roles;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean accountNonExpired = true; // La cuenta no ha expirado
+    private boolean accountNonExpired;
+    private boolean accountNonLocked;
+    private boolean credentialsNonExpired;
+    private boolean enabled;
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean accountNonLocked = true; // La cuenta no está bloqueada
+    public Usuario(String username, String password, String email, Set<String> roles, boolean enabled) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+        this.roles = roles;
+        this.accountNonExpired = true;
+        this.accountNonLocked = true;
+        this.credentialsNonExpired = true;
+        this.enabled = enabled;
+    }
 
-    @Builder.Default
-    @Column(nullable = false)
-    private boolean credentialsNonExpired = true; // Las credenciales no han expirado
-
+    /**
+     * Implementación de los métodos de UserDetails para Spring Security
+     */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.singletonList(() -> role);
+        return roles.stream().map(role -> (GrantedAuthority) () -> role).collect(Collectors.toList());
     }
 
     @Override

@@ -1,0 +1,104 @@
+
+### 🔹 REGISTRAR USUARIO
+POST {{base_url}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123",
+  "email": "test@test.cl",
+  "role": "admin"
+}
+
+### 🔹 GENERAR TOKEN (LOGIN)
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+### 🔹 LISTAR USUARIOS (Requiere Token)
+GET {{base_url}}/api/usuarios
+Authorization: Bearer {{auth_token}}
+
+### 🔹 OBTENER USUARIO POR ID (Requiere Token)
+GET {{base_url}}/api/usuarios/1
+Authorization: Bearer {{auth_token}}
+
+### 🔹 BUSCAR USUARIO POR USERNAME
+GET {{base_url}}/api/usuarios/buscar?username=admin
+Authorization: Bearer {{auth_token}}
+
+### 🔹 ACTUALIZAR USUARIO (Requiere Token)
+PUT {{base_url}}/api/usuarios/admin
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "adminupdate",
+  "email": "testUpdated@test2.cl",
+  "role": "admin"
+}
+
+### 🔹 ELIMINAR USUARIO POR ID (Requiere Token, Solo ADMIN)
+DELETE {{base_url}}/api/usuarios/1
+Authorization: Bearer {{auth_token}}
+
+### 🔹 AGREGAR PRODUCTO (Requiere Token, Solo ADMIN)
+POST {{base_url}}/api/productos
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD002",
+  "precioUnitario": 2000,
+  "stock": 30
+}
+
+### 🔹 LISTAR PRODUCTOS (Requiere Token)
+GET {{base_url}}/api/productos
+Authorization: Bearer {{auth_token}}
+
+### 🔹 OBTENER PRODUCTO POR CÓDIGO (Requiere Token)
+GET {{base_url}}/api/productos/PROD002
+Authorization: Bearer {{auth_token}}
+
+### 🔹 ACTUALIZAR UN PRODUCTO (Requiere Token, Solo ADMIN)
+PUT {{base_url}}/api/productos/999
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD999",
+  "precioUnitario": 3000,
+  "stock": 20
+}
+
+### 🔹 AGREGAR PRODUCTO AL CARRITO (Requiere Token)
+POST {{base_url}}/api/carrito/usuario123
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD001",
+  "cantidad": 3
+}
+
+### 🔹 OBTENER CARRITO DE USUARIO (Requiere Token)
+GET {{base_url}}/api/carrito/usuario123
+Authorization: Bearer {{auth_token}}
+
+### 🔹 ELIMINAR PRODUCTO DEL CARRITO (Requiere Token)
+DELETE {{base_url}}/api/carrito/usuario123/PROD001
+Authorization: Bearer {{auth_token}}
+
+### 🔹 VACIAR CARRITO DE USUARIO (Requiere Token)
+DELETE {{base_url}}/api/carrito/usuario123
+Authorization: Bearer {{auth_token}}
+
+### 🔹 REALIZAR COMPRA (Requiere Token)
+POST {{base_url}}/api/compra/usuario123
+Authorization: Bearer {{auth_token}}

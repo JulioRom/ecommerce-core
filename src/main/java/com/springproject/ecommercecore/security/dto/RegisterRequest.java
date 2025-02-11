@@ -1,25 +1,24 @@
 package com.springproject.ecommercecore.security.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
-@Setter
 @Getter
-@ToString
-@AllArgsConstructor
-@NoArgsConstructor
+@Setter
 public class RegisterRequest {
 
-    @JsonProperty("username")
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
 
-    @JsonProperty("password")
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 
-    @JsonProperty("email")
+    @NotBlank(message = "El email es obligatorio")
+    @Email(message = "El email debe ser válido")
     private String email;
 
-    @JsonProperty("role")
+    @NotBlank(message = "El rol es obligatorio")
     private String role;
-
 }

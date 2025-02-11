@@ -1,6 +1,5 @@
 package com.springproject.ecommercecore.service;
 
-import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import com.springproject.ecommercecore.repository.postgresql.ProductoRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,9 +19,8 @@ public class ProductoService {
     }
 
     // Buscar producto por código
-    public Producto buscarPorCodigo(String codigoProducto) {
-        return Optional.ofNullable(productoRepository.findByCodigoProducto(codigoProducto))
-                .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado: " + codigoProducto));
+    public Optional<Producto> buscarPorCodigo(String codigoProducto) {
+        return Optional.ofNullable(productoRepository.findByCodigoProducto(codigoProducto));
     }
 
     // Restar stock de un producto
@@ -42,18 +40,25 @@ public class ProductoService {
     }
 
     // ✅ Actualizar un producto existente
-    public Producto actualizarProducto(String codigoProducto, Producto productoDetalles) {
-        Producto productoExistente = buscarPorCodigo(codigoProducto);
+    public Optional<Producto> actualizarProducto(String codigoProducto, Producto productoDetalles) {
+        Producto productoExistente = productoRepository.findByCodigoProducto(codigoProducto);
+        if (productoExistente == null) {
+            return Optional.empty();
+        }
 
         productoExistente.setPrecioUnitario(productoDetalles.getPrecioUnitario());
         productoExistente.setStock(productoDetalles.getStock());
-
-        return productoRepository.save(productoExistente);
+        return Optional.of(productoRepository.save(productoExistente));
     }
 
     // ✅ Eliminar un producto
-    public void eliminarProducto(String codigoProducto) {
-        Producto producto = buscarPorCodigo(codigoProducto);
+    public boolean eliminarProducto(String codigoProducto) {
+        Producto producto = productoRepository.findByCodigoProducto(codigoProducto);
+        if (producto == null) {
+            return false;
+        }
+
         productoRepository.delete(producto);
+        return true;
     }
 }

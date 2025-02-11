@@ -7,7 +7,7 @@
 	},
 	"item": [
 		{
-			"name": "Autenticación",
+			"name": "Autenticación y Usuario",
 			"item": [
 				{
 					"name": "Registrar Usuario",
@@ -21,7 +21,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\",\n  \"role\": \"ADMIN\"\n}"
+							"raw": "{\n    \"username\": \"admin\",\n    \"password\": \"admin123\",\n    \"email\": \"test@test.cl\",\n    \"role\": \"admin\"\n}"
 						},
 						"url": {
 							"raw": "{{base_url}}/api/auth/register",
@@ -69,7 +69,23 @@
 					"name": "Lista Usuarios",
 					"request": {
 						"method": "GET",
-						"header": []
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios"
+							]
+						}
 					},
 					"response": []
 				},
@@ -77,12 +93,71 @@
 					"name": "Obtener usuario por ID",
 					"request": {
 						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/1",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Buscar por username",
+					"request": {
+						"method": "GET",
 						"header": []
 					},
 					"response": []
 				},
 				{
-					"name": "Eliminar Usuario",
+					"name": "Actualizar usuario",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"username\": \"admin\",\r\n    \"password\": \"adminupdate\",\r\n    \"email\": \"testUpdated@test2.cl\",\r\n    \"role\": \"admin\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/usuarios/admin",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"usuarios",
+								"admin"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "New Request",
 					"request": {
 						"method": "GET",
 						"header": []
@@ -351,6 +426,10 @@
 			"key": "auth_token",
 			"value": "",
 			"type": "string"
+		},
+		{
+			"key": "authToken",
+			"value": ""
 		}
 	]
 }

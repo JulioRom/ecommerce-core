@@ -1,13 +1,16 @@
 package com.springproject.ecommercecore.security.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.validation.constraints.NotBlank;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
+@Setter
 public class AuthRequest {
+
+    @NotBlank(message = "El nombre de usuario es obligatorio")
     private String username;
+
+    @NotBlank(message = "La contraseña es obligatoria")
     private String password;
 }

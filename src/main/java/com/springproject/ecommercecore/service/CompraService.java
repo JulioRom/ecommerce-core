@@ -1,6 +1,5 @@
 package com.springproject.ecommercecore.service;
 
-import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.repository.postgresql.DetalleCompraRepository;
 import com.springproject.ecommercecore.repository.postgresql.OrdenCompraRepository;
 import com.springproject.ecommercecore.model.mongodb.*;
@@ -23,41 +22,47 @@ public class CompraService {
 
     // ✅ Generar compra a partir del carrito con cantidades
     public String generarCompra(String idUsuario) {
-        // Obtener el carrito del usuario
-        Optional<CarritoCompra> carritoOpt = Optional.ofNullable(carritoCompraService.obtenerCarrito(idUsuario));
-
-        if (carritoOpt.isEmpty() || carritoOpt.get().getProductos().isEmpty()) {
-            throw new RecursoNoEncontradoException("El carrito está vacío. No se puede generar la compra.");
+        Optional<CarritoCompra> carritoOpt = carritoCompraService.obtenerCarrito(idUsuario);
+        if (carritoOpt.isEmpty()) {
+            return "El carrito de compras no existe.";
         }
 
         CarritoCompra carrito = carritoOpt.get();
+        if (carrito.getProductos().isEmpty()) {
+            return "El carrito está vacío.";
+        }
 
-        // Validar stock y crear detalles de compra
+        // Validar stock de los productos y preparar los detalles de compra
         List<DetalleCompra> detalles = carrito.getProductos().stream().map(productoCarrito -> {
-            Producto producto = productoService.buscarPorCodigo(productoCarrito.getCodigoProducto());
+            Optional<Producto> productoOpt = productoService.buscarPorCodigo(productoCarrito.getCodigoProducto());
 
-            if (producto.getStock() < productoCarrito.getCantidad()) {
+            if (productoOpt.isEmpty()) {
+                throw new RuntimeException("Producto no encontrado: " + productoCarrito.getCodigoProducto());
+            }
+
+            Producto producto = productoOpt.get();
+            int cantidadSolicitada = productoCarrito.getCantidad();
+
+            if (producto.getStock() < cantidadSolicitada) {
                 throw new RuntimeException("Stock insuficiente para el producto: " + productoCarrito.getCodigoProducto());
             }
 
-            BigDecimal totalDetalle = productoCarrito.getPrecioUnitario().multiply(BigDecimal.valueOf(productoCarrito.getCantidad()));
-            productoService.actualizarStock(producto.getCodigoProducto(), productoCarrito.getCantidad());
+            // Calculamos el total como Integer porque en DetalleCompra, totalDetalle es Integer
+            int totalDetalle = producto.getPrecioUnitario()
+                    .multiply(BigDecimal.valueOf(cantidadSolicitada))
+                    .intValueExact();
 
-            return new DetalleCompra(
-                    null,
-                    producto,
-                    productoCarrito.getCantidad(),
-                    productoCarrito.getPrecioUnitario(),
-                    totalDetalle.intValue(),
-                    new OrdenCompra()
-            );
+            // Actualizar stock
+            productoService.actualizarStock(producto.getCodigoProducto(), cantidadSolicitada);
+
+            return new DetalleCompra(null, producto, cantidadSolicitada, producto.getPrecioUnitario(), totalDetalle, null);
         }).toList();
 
         // Crear la orden de compra
         OrdenCompra orden = new OrdenCompra();
         orden.setFechaEmision(new Date());
-        orden.setFechaEntrega(new Date());  // 🚨 Ajustar si es necesario
-        orden.setFechaSolicitada(new Date());  // 🚨 Ajustar si es necesario
+        orden.setFechaEntrega(new Date());
+        orden.setFechaSolicitada(new Date());
         orden = ordenCompraRepository.save(orden);
 
         // Asociar detalles a la orden y guardarlos en la base de datos
@@ -66,7 +71,7 @@ public class CompraService {
             detalleCompraRepository.save(detalle);
         }
 
-        // Vaciar el carrito después de procesar la compra
+        // ✅ Vaciar el carrito después de procesar la compra
         carritoCompraService.vaciarCarrito(idUsuario);
 
         return "Compra realizada con éxito. ID de Orden: " + orden.getId();
