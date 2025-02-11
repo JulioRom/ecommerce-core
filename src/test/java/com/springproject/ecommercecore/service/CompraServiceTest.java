@@ -14,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -44,14 +46,14 @@ class CompraServiceTest {
     @BeforeEach
     void setUp() {
         // Crear un producto en el carrito
-        ProductoCarrito productoCarritoEjemplo = new ProductoCarrito("PROD001", 2);
+        ProductoCarrito productoCarritoEjemplo = new ProductoCarrito("PROD001", 2, 3000);
 
         // Crear un carrito con productos
-        carritoEjemplo = new CarritoCompra("usuario123", new ArrayList<>());
+        carritoEjemplo = new CarritoCompra(null,"usuario123", new java.util.ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
         carritoEjemplo.getProductos().add(productoCarritoEjemplo);
 
         // Crear un producto en la base de datos
-        productoEjemplo = new Producto(1, "PROD001", 1000, 10);
+        productoEjemplo = new Producto("PROD001", 1000, 10);
 
         // Crear una orden de compra
         ordenCompraEjemplo = new OrdenCompra();
@@ -94,7 +96,7 @@ class CompraServiceTest {
     @Test
     void testGenerarCompra_CarritoVacio() {
         // Simular un carrito vacío
-        CarritoCompra carritoVacio = new CarritoCompra("usuario123", new ArrayList<>());
+        CarritoCompra carritoVacio = new CarritoCompra("1","usuario123", new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
 
         when(carritoCompraService.obtenerCarrito("usuario123")).thenReturn(carritoVacio);
 

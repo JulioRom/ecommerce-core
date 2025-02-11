@@ -34,8 +34,8 @@ class ProductoControllerTest {
     void listarProductos_CuandoExistenProductos_DeberiaRetornarLista() {
         // Arrange
         List<Producto> productos = Arrays.asList(
-                new Producto(1, "Laptop", 1500, 10),
-                new Producto(2, "Mouse", 25, 50)
+                new Producto("Laptop", 1500, 10),
+                new Producto("Mouse", 25, 50)
         );
 
         when(productoService.listarProductos()).thenReturn(productos);
@@ -55,7 +55,7 @@ class ProductoControllerTest {
     void obtenerProducto_CuandoExiste_DeberiaRetornarProducto() {
         // Arrange
         String codigo = "Laptop";
-        Producto producto = new Producto(1, codigo, 1500, 10);
+        Producto producto = new Producto(codigo, 1500, 10);
 
         when(productoService.buscarPorCodigo(codigo)).thenReturn(producto);
 
@@ -73,7 +73,7 @@ class ProductoControllerTest {
     @Test
     void agregarProducto_DeberiaGuardarYRetornarProducto() {
         // Arrange
-        Producto producto = new Producto(2, "Teclado", 50, 30);
+        Producto producto = new Producto("Teclado", 50, 30);
         when(productoService.guardarProducto(producto)).thenReturn(producto);
 
         // Act
@@ -91,7 +91,7 @@ class ProductoControllerTest {
     void actualizarProducto_CuandoExiste_DeberiaActualizarProducto() {
         // Arrange
         String codigo = "Laptop Pro";
-        Producto productoActualizado = new Producto(5, codigo, 1700, 8);
+        Producto productoActualizado = new Producto(codigo, 1700, 8);
 
         // Simular que el producto existe antes de actualizarlo
         when(productoService.buscarPorCodigo(codigo)).thenReturn(productoActualizado);
@@ -114,7 +114,7 @@ class ProductoControllerTest {
     void eliminarProducto_CuandoExiste_DeberiaEliminarProducto() {
         // Arrange
         String codigo = "Laptop";
-        Producto productoExistente = new Producto(1, codigo, 1500, 10);
+        Producto productoExistente = new Producto(codigo, 1500, 10);
 
         // Simular que el producto existe antes de eliminarlo
         when(productoService.buscarPorCodigo(codigo)).thenReturn(productoExistente);
@@ -145,9 +145,7 @@ class ProductoControllerTest {
         when(productoService.buscarPorCodigo(codigo)).thenThrow(new RecursoNoEncontradoException(mensajeEsperado));
 
         // Act & Assert
-        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> {
-            productoController.obtenerProducto(codigo);
-        });
+        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> productoController.obtenerProducto(codigo));
 
         // Verificar que el mensaje de la excepción es el esperado
         assertNotNull(exception);
@@ -162,7 +160,7 @@ class ProductoControllerTest {
     @Test
     void agregarProducto_CuandoDatosInvalidos_DeberiaRetornarBadRequest() {
         // Arrange
-        Producto productoInvalido = new Producto(5, null, -10, -5); // Nombre nulo, precio negativo, stock negativo
+        Producto productoInvalido = new Producto(null, -10, -5); // Nombre nulo, precio negativo, stock negativo
 
         // Act
         ResponseEntity<Producto> response = productoController.agregarProducto(productoInvalido);
@@ -176,14 +174,12 @@ class ProductoControllerTest {
     void actualizarProducto_CuandoNoExiste_DeberiaLanzarExcepcion() {
         // Arrange
         String codigo = "ProductoInexistente";
-        Producto productoDetalles = new Producto(1, "Producto Actualizado", 1200, 5);
+        Producto productoDetalles = new Producto("Producto Actualizado", 1200, 5);
 
         when(productoService.buscarPorCodigo(codigo)).thenReturn(null);
 
         // Act & Assert
-        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> {
-            productoController.actualizarProducto(codigo, productoDetalles);
-        });
+        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> productoController.actualizarProducto(codigo, productoDetalles));
 
         assertEquals("No se puede actualizar. Producto con código ProductoInexistente no encontrado.", exception.getMessage());
 
@@ -198,9 +194,7 @@ class ProductoControllerTest {
         when(productoService.buscarPorCodigo(codigo)).thenReturn(null);
 
         // Act & Assert
-        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> {
-            productoController.eliminarProducto(codigo);
-        });
+        RecursoNoEncontradoException exception = assertThrows(RecursoNoEncontradoException.class, () -> productoController.eliminarProducto(codigo));
 
         assertEquals("No se puede eliminar. Producto con código ProductoInexistente no encontrado.", exception.getMessage());
 

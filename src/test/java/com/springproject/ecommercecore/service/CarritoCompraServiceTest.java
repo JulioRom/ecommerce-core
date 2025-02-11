@@ -10,6 +10,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,8 +32,8 @@ class CarritoCompraServiceTest {
 
     @BeforeEach
     void setUp() {
-        productoEjemplo = new ProductoCarrito("PROD001", 2);
-        carritoEjemplo = new CarritoCompra("usuario123", new ArrayList<>());
+        productoEjemplo = new ProductoCarrito("PROD001", 2,3000);
+        carritoEjemplo = new CarritoCompra(null,"usuario123", new java.util.ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
     }
 
     @Test
@@ -47,7 +49,7 @@ class CarritoCompraServiceTest {
 
     @Test
     void testAgregarProducto_CarritoExistente_ProductoNuevo() {
-        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD002", 1));
+        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD002", 1, 3000));
 
         when(carritoCompraRepository.findById("usuario123")).thenReturn(Optional.of(carritoEjemplo));
         when(carritoCompraRepository.save(any(CarritoCompra.class))).thenReturn(carritoEjemplo);
@@ -63,7 +65,7 @@ class CarritoCompraServiceTest {
 
     @Test
     void testAgregarProducto_CarritoExistente_ProductoYaExiste() {
-        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD001", 3));
+        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD001", 3, 3000));
 
         when(carritoCompraRepository.findById("usuario123")).thenReturn(Optional.of(carritoEjemplo));
         when(carritoCompraRepository.save(any(CarritoCompra.class))).thenReturn(carritoEjemplo);

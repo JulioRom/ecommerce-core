@@ -1,15 +1,25 @@
 package com.springproject.ecommercecore.security.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.*;
 
-@Data
+@Setter
+@Getter
+@ToString
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegisterRequest {
+
+    @JsonProperty("username")
     private String username;
+
+    @JsonProperty("password")
     private String password;
+
+    @JsonProperty("email")
     private String email;
-    private String role; // "ADMIN" o "USER"
+
+    @JsonProperty("role")
+    private String role;
+
 }

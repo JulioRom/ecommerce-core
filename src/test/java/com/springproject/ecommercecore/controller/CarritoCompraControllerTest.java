@@ -15,6 +15,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import java.time.LocalDateTime;
+
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,8 +44,8 @@ class CarritoCompraControllerTest {
                 .build();        objectMapper = new ObjectMapper();
 
         // Datos de prueba
-        productoEjemplo = new ProductoCarrito("PROD001", 2);
-        carritoEjemplo = new CarritoCompra("usuario123", new java.util.ArrayList<>());
+        productoEjemplo = new ProductoCarrito("PROD001", 2,3000);
+        carritoEjemplo = new CarritoCompra(null,"usuario123", new java.util.ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
     }
 
     @Test

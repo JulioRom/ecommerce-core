@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.math.BigDecimal;
 import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -41,12 +43,13 @@ class DetalleCompraRepositoryTest {
         // Crear producto
         productoEjemplo = new Producto();
         productoEjemplo.setCodigoProducto("PROD001");
-        productoEjemplo.setPrecioUnitario(1000);
+        productoEjemplo.setPrecioUnitario(BigDecimal.valueOf(1000));
         productoEjemplo.setStock(10);
         productoEjemplo = productoRepository.save(productoEjemplo);
 
         // Crear detalle de compra
-        detalleEjemplo = new DetalleCompra(null, productoEjemplo, 2, 2000, ordenEjemplo);
+        BigDecimal precioUnitario = productoEjemplo.getPrecioUnitario();
+        detalleEjemplo = new DetalleCompra(1,productoEjemplo, 1, precioUnitario,3000, ordenEjemplo);
         detalleEjemplo = detalleCompraRepository.save(detalleEjemplo);
     }
 

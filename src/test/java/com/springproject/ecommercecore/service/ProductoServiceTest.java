@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+
+import java.math.BigDecimal;
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -27,7 +29,7 @@ class ProductoServiceTest {
 
     @BeforeEach
     void setUp() {
-        productoEjemplo = new Producto(1, "PROD001", 1000, 10);
+        productoEjemplo = new Producto("PROD001", 1000, 10);
     }
 
     @Test
@@ -106,7 +108,7 @@ class ProductoServiceTest {
 
     @Test
     void testActualizarProducto_Encontrado() {
-        Producto productoActualizado = new Producto(1, "PROD001", 1200, 15);
+        Producto productoActualizado = new Producto("PROD001", 1200, 15);
 
         when(productoRepository.findByCodigoProducto("PROD001")).thenReturn(productoEjemplo);
         when(productoRepository.save(any(Producto.class))).thenReturn(productoActualizado);
@@ -114,7 +116,7 @@ class ProductoServiceTest {
         Producto resultado = productoService.actualizarProducto("PROD001", productoActualizado);
 
         assertThat(resultado).isNotNull();
-        assertThat(resultado.getPrecioUnitario()).isEqualTo(1200);
+        assertThat(resultado.getPrecioUnitario()).isEqualByComparingTo(new BigDecimal("1200"));
         assertThat(resultado.getStock()).isEqualTo(15);
 
         verify(productoRepository, times(1)).findByCodigoProducto("PROD001");

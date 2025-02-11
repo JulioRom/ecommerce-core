@@ -8,6 +8,7 @@ import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 
 @Entity
@@ -15,7 +16,6 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,4 +40,10 @@ public class Producto {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
+    public Producto(String codigoProducto, double precio, Integer stock) {
+        this.codigoProducto = codigoProducto;
+        this.stock = stock;
+        this.precioUnitario = BigDecimal.valueOf(precio).setScale(2, RoundingMode.HALF_UP);
+    }
 }

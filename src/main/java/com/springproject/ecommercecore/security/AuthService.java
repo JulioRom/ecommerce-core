@@ -38,7 +38,16 @@ public class AuthService {
         return new AuthResponse(token);
     }
 
-    public void registerUser(RegisterRequest request) {
+    public String registerUser(RegisterRequest request) {
+        if (request.getUsername() == null || request.getUsername().trim().isEmpty()) {
+            throw new IllegalArgumentException("El nombre de usuario es obligatorio");
+        }
+        if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
+            throw new IllegalArgumentException("La contraseña es obligatoria");
+        }
+        if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
+            throw new IllegalArgumentException("El email es obligatorio");
+        }
         Optional<Usuario> existingUser = usuarioRepository.findByUsername(request.getUsername());
         if (existingUser.isPresent()) {
             throw new IllegalArgumentException("El usuario ya existe");
@@ -52,5 +61,6 @@ public class AuthService {
                 .build();
 
         usuarioRepository.save(newUser);
+        return "Usuario registrado exitosamente";
     }
 }

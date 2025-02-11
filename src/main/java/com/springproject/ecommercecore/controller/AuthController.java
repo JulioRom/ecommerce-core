@@ -1,5 +1,8 @@
 package com.springproject.ecommercecore.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.springproject.ecommercecore.security.AuthService;
 import com.springproject.ecommercecore.security.dto.AuthRequest;
 import com.springproject.ecommercecore.security.dto.AuthResponse;
@@ -16,13 +19,13 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -31,7 +34,6 @@ public class AuthController {
 
     private final AuthService authService;
     private final UsuarioRepository usuarioRepository;
-    private final PasswordEncoder passwordEncoder;
 
     @Operation(summary = "Iniciar sesión", description = "Autentica un usuario y devuelve un token de acceso")
     @ApiResponses(value = {
@@ -54,20 +56,14 @@ public class AuthController {
             @ApiResponse(responseCode = "400", description = "El usuario ya existe")
     })
     @PostMapping("/register")
-    public ResponseEntity<String> register(@Valid @RequestBody RegisterRequest request) {
-        if (usuarioRepository.findByUsername(request.getUsername()).isPresent()) {
-            return ResponseEntity.badRequest().body("El usuario ya existe.");
+    public ResponseEntity<String> register(@RequestBody(required = false) String requestBody) {
+        System.out.println("🔹 JSON Crudo recibido: " + requestBody);
+
+        if (requestBody == null || requestBody.isBlank()) {
+            return ResponseEntity.badRequest().body("❌ Error: No se recibió ningún JSON en el `RequestBody`.");
         }
 
-        Usuario nuevoUsuario = Usuario.builder()
-                .username(request.getUsername())
-                .password(passwordEncoder.encode(request.getPassword()))
-                .email(request.getEmail())
-                .role(Collections.singleton("ROLE_USER").toString())
-                .build();
-
-        usuarioRepository.save(nuevoUsuario);
-        return ResponseEntity.ok("Usuario registrado exitosamente");
+        return ResponseEntity.ok("✅ JSON Recibido correctamente: " + requestBody);
     }
 
     @Operation(summary = "Listar usuarios", description = "Obtiene una lista de todos los usuarios registrados")

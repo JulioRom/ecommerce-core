@@ -7,6 +7,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import java.math.BigDecimal;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
@@ -22,7 +25,7 @@ class ProductoRepositoryTest {
     void setUp() {
         productoEjemplo = new Producto();
         productoEjemplo.setCodigoProducto("PROD001");
-        productoEjemplo.setPrecioUnitario(1000);
+        productoEjemplo.setPrecioUnitario(BigDecimal.valueOf(1000));
         productoEjemplo.setStock(10);
         productoRepository.save(productoEjemplo);
     }
@@ -44,7 +47,7 @@ class ProductoRepositoryTest {
     void testGuardarProducto() {
         Producto nuevoProducto = new Producto();
         nuevoProducto.setCodigoProducto("PROD002");
-        nuevoProducto.setPrecioUnitario(2000);
+        nuevoProducto.setPrecioUnitario(BigDecimal.valueOf(2000));
         nuevoProducto.setStock(5);
 
         Producto guardado = productoRepository.save(nuevoProducto);

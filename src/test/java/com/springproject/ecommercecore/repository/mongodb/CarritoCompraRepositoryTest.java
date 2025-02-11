@@ -11,6 +11,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDateTime;
 import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -29,8 +31,8 @@ class CarritoCompraRepositoryTest {
 
     @BeforeEach
     void setUp() {
-        carritoEjemplo = new CarritoCompra("usuario123", new java.util.ArrayList<>());
-        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD001", 2));
+        carritoEjemplo = new CarritoCompra(null,"usuario123", new java.util.ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
+        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD001", 2, 3000));
 
         carritoEjemplo = carritoCompraRepository.save(carritoEjemplo);
     }
@@ -52,7 +54,7 @@ class CarritoCompraRepositoryTest {
 
     @Test
     void testActualizarCarrito() {
-        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD002", 1));
+        carritoEjemplo.getProductos().add(new ProductoCarrito("PROD002", 1, 3000));
         carritoCompraRepository.save(carritoEjemplo);
 
         Optional<CarritoCompra> carritoActualizado = carritoCompraRepository.findById("usuario123");
