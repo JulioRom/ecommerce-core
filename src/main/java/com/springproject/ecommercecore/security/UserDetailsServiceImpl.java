@@ -9,7 +9,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -24,10 +23,17 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         Usuario usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado: " + username));
 
+        // 🔹 Convertir Set<String> de roles a List<SimpleGrantedAuthority>
+        List<SimpleGrantedAuthority> authorities = usuario.getRoles() != null
+                ? usuario.getRoles().stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList())
+                : List.of(); // Si no hay roles, lista vacía
+
         return new User(
                 usuario.getUsername(),
                 usuario.getPassword(),
-                List.of(new SimpleGrantedAuthority(usuario.getRoles().toString()))
+                authorities
         );
     }
 }

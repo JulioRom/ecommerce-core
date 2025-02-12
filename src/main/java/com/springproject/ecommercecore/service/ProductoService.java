@@ -20,45 +20,45 @@ public class ProductoService {
 
     // Buscar producto por código
     public Optional<Producto> buscarPorCodigo(String codigoProducto) {
-        return Optional.ofNullable(productoRepository.findByCodigoProducto(codigoProducto));
+        return productoRepository.findByCodigoProducto(codigoProducto);
     }
 
     // Restar stock de un producto
-    public boolean actualizarStock(String codigoProducto, int cantidad) {
-        Producto producto = productoRepository.findByCodigoProducto(codigoProducto);
-        if (producto != null && producto.getStock() >= cantidad) {
-            producto.setStock(producto.getStock() - cantidad);
-            productoRepository.save(producto);
-            return true;
+    public void actualizarStock(String codigoProducto, int cantidad) {
+        Producto producto = productoRepository.findByCodigoProducto(codigoProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
+
+        if (producto.getStock() < cantidad) {
+            throw new IllegalArgumentException("Stock insuficiente para el producto: " + codigoProducto);
         }
-        return false;
+
+        producto.setStock(producto.getStock() - cantidad);
+        productoRepository.save(producto);
     }
 
-    // ✅ Guardar un nuevo producto
+
+    //  Guardar un nuevo producto
     public Producto guardarProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
-    // ✅ Actualizar un producto existente
-    public Optional<Producto> actualizarProducto(String codigoProducto, Producto productoDetalles) {
-        Producto productoExistente = productoRepository.findByCodigoProducto(codigoProducto);
-        if (productoExistente == null) {
-            return Optional.empty();
-        }
+    //  Actualizar un producto existente
+    public Producto actualizarProducto(String codigoProducto, Producto productoDetalles) {
+        Producto productoExistente = productoRepository.findByCodigoProducto(codigoProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
         productoExistente.setPrecioUnitario(productoDetalles.getPrecioUnitario());
         productoExistente.setStock(productoDetalles.getStock());
-        return Optional.of(productoRepository.save(productoExistente));
+
+        return productoRepository.save(productoExistente);
     }
 
-    // ✅ Eliminar un producto
-    public boolean eliminarProducto(String codigoProducto) {
-        Producto producto = productoRepository.findByCodigoProducto(codigoProducto);
-        if (producto == null) {
-            return false;
-        }
+    //  Eliminar un producto
+    public void eliminarProducto(String codigoProducto) {
+        Producto producto = productoRepository.findByCodigoProducto(codigoProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
         productoRepository.delete(producto);
-        return true;
     }
+
 }

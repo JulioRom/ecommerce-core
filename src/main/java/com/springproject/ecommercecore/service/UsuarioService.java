@@ -28,7 +28,7 @@ public class UsuarioService {
     /**
      * 🔹 Obtener usuario por ID
      */
-    public Optional<Usuario> obtenerPorId(Long id) {
+    public Optional<Usuario> obtenerPorId(Integer id) {
         return usuarioRepository.findById(id);
     }
 
@@ -80,7 +80,7 @@ public class UsuarioService {
     /**
      * 🔹 Eliminar usuario por ID
      */
-    public boolean eliminarUsuario(Long id) {
+    public boolean eliminarUsuario(Integer id) {
         if (usuarioRepository.existsById(id)) {
             usuarioRepository.deleteById(id);
             return true;

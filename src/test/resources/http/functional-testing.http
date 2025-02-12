@@ -1,0 +1,135 @@
+###Crea un usuario (Admin y User)
+#ADMIN
+POST {{base_url}}/api/auth/register
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123",
+  "email": "admin@test.com",
+  "role": "ADMIN"
+}
+
+###
+#USER
+POST {{base_url}}/api/auth/register
+Content-Type: application/json
+
+{
+"username": "user",
+"password": "user123",
+"email": "user@test.com",
+"role": "USER"
+}
+
+###Iniciar Sesión y Obtener Token
+#ADMIN
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "admin",
+  "password": "admin123"
+}
+
+###
+#USER
+POST {{base_url}}/api/auth/login
+Content-Type: application/json
+
+{
+  "username": "user",
+  "password": "user123"
+}
+
+###
+#Crear Productos (Solo ADMIN)
+POST {{base_url}}/api/productos
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD001",
+  "precioUnitario": 4000,
+  "stock": 30
+}
+
+###
+POST {{base_url}}/api/productos
+Authorization: Bearer {{auth_token}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD003",
+  "precioUnitario": 3000,
+  "stock": 50
+}
+
+###
+#Agregar productos al carrito
+# Agregar PROD001 (2 unidades)
+POST {{base_url}}/api/carrito/user
+Authorization: Bearer {{auth_token_user}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD001",
+  "precioUnitario": 4000,
+  "cantidad": 3
+}
+
+###
+#Agregar PROD002 (1 unidad)
+POST {{base_url}}/api/carrito/user
+Authorization: Bearer {{auth_token_user}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD003",
+  "precioUnitario": 4000,
+  "cantidad": 3
+}
+
+### 🔹 Generar Compra
+POST {{base_url}}/api/compras/1?fechaSolicitada=2025-02-12T12:00:00.000
+Authorization: Bearer {{auth_token_user}}
+Content-Type: application/json
+
+### 🔹 Obtener todas las órdenes de un usuario
+GET {{base_url}}/api/compras/usuario/1
+Authorization: Bearer {{auth_token_user}}
+
+### 🔹 Obtener una orden de compra por su ID
+GET {{base_url}}/api/compras/3
+Authorization: Bearer {{auth_token_user}}
+
+### 🔹 Actualizar el estado de una orden de compra (Solo ADMIN)
+PUT {{base_url}}/api/compras/3/estado?nuevoEstado=ENVIADO
+Authorization: Bearer {{auth_token_admin}}
+
+### 🔹 Cancelar una orden de compra
+DELETE {{base_url}}/api/compras/3/cancelar
+Authorization: Bearer {{auth_token_user}}
+
+### 🔹 Obtener el carrito de un usuario
+GET {{base_url}}/api/carrito/1
+Authorization: Bearer {{auth_token_user}}
+
+### 🔹 Agregar un producto al carrito
+POST {{base_url}}/api/carrito/1
+Authorization: Bearer {{auth_token_user}}
+Content-Type: application/json
+
+{
+  "codigoProducto": "PROD001",
+  "cantidad": 2
+}
+
+### 🔹 Eliminar un producto del carrito
+DELETE {{base_url}}/api/carrito/1/PROD001
+Authorization: Bearer {{auth_token_user}}
+
+### 🔹 Vaciar el carrito de un usuario
+DELETE {{base_url}}/api/carrito/1
+Authorization: Bearer {{auth_token_user}}
+

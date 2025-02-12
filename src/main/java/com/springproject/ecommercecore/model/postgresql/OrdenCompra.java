@@ -2,6 +2,8 @@ package com.springproject.ecommercecore.model.postgresql;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -14,15 +16,9 @@ public class OrdenCompra {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaEmision;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaEntrega;
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date fechaSolicitada;
+    private LocalDateTime fechaEmision;
+    private LocalDateTime fechaEntrega;
+    private LocalDateTime fechaSolicitada;
 
     @ManyToOne
     @JoinColumn(name = "id_usuario", nullable = false)

@@ -1,80 +1,81 @@
 package com.springproject.ecommercecore.service;
 
-import com.springproject.ecommercecore.repository.postgresql.DetalleCompraRepository;
+import com.springproject.ecommercecore.model.postgresql.OrdenCompra;
+import com.springproject.ecommercecore.model.postgresql.Usuario;
 import com.springproject.ecommercecore.repository.postgresql.OrdenCompraRepository;
-import com.springproject.ecommercecore.model.mongodb.*;
-import com.springproject.ecommercecore.model.postgresql.*;
+import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
-import java.util.Date;
+import org.springframework.transaction.annotation.Transactional;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CompraService {
-    private final CarritoCompraService carritoCompraService;
-    private final ProductoService productoService;
+
     private final OrdenCompraRepository ordenCompraRepository;
-    private final DetalleCompraRepository detalleCompraRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    // ✅ Generar compra a partir del carrito con cantidades
-    public String generarCompra(String idUsuario) {
-        Optional<CarritoCompra> carritoOpt = carritoCompraService.obtenerCarrito(idUsuario);
-        if (carritoOpt.isEmpty()) {
-            return "El carrito de compras no existe.";
-        }
+    /**
+     * 🔹 Generar una nueva orden de compra
+     */
+    @Transactional
+    public OrdenCompra generarCompra(Integer idUsuario, LocalDateTime fechaSolicitada) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        CarritoCompra carrito = carritoOpt.get();
-        if (carrito.getProductos().isEmpty()) {
-            return "El carrito está vacío.";
-        }
-
-        // Validar stock de los productos y preparar los detalles de compra
-        List<DetalleCompra> detalles = carrito.getProductos().stream().map(productoCarrito -> {
-            Optional<Producto> productoOpt = productoService.buscarPorCodigo(productoCarrito.getCodigoProducto());
-
-            if (productoOpt.isEmpty()) {
-                throw new RuntimeException("Producto no encontrado: " + productoCarrito.getCodigoProducto());
-            }
-
-            Producto producto = productoOpt.get();
-            int cantidadSolicitada = productoCarrito.getCantidad();
-
-            if (producto.getStock() < cantidadSolicitada) {
-                throw new RuntimeException("Stock insuficiente para el producto: " + productoCarrito.getCodigoProducto());
-            }
-
-            // Calculamos el total como Integer porque en DetalleCompra, totalDetalle es Integer
-            int totalDetalle = producto.getPrecioUnitario()
-                    .multiply(BigDecimal.valueOf(cantidadSolicitada))
-                    .intValueExact();
-
-            // Actualizar stock
-            productoService.actualizarStock(producto.getCodigoProducto(), cantidadSolicitada);
-
-            return new DetalleCompra(null, producto, cantidadSolicitada, producto.getPrecioUnitario(), totalDetalle, null);
-        }).toList();
-
-        // Crear la orden de compra
         OrdenCompra orden = new OrdenCompra();
-        orden.setFechaEmision(new Date());
-        orden.setFechaEntrega(new Date());
-        orden.setFechaSolicitada(new Date());
-        orden = ordenCompraRepository.save(orden);
+        orden.setUsuario(usuario);
+        orden.setFechaEmision(LocalDateTime.now()); // 🔹 Usamos LocalDateTime en lugar de Date
+        orden.setFechaSolicitada(fechaSolicitada);
+        orden.setEstado(OrdenCompra.EstadoOrden.PENDIENTE);
 
-        // Asociar detalles a la orden y guardarlos en la base de datos
-        for (DetalleCompra detalle : detalles) {
-            detalle.setOrdenCompra(orden);
-            detalleCompraRepository.save(detalle);
+        return ordenCompraRepository.save(orden);
+    }
+
+    /**
+     * 🔹 Obtener todas las órdenes de un usuario
+     */
+    public List<OrdenCompra> obtenerOrdenesPorUsuario(Integer idUsuario) {
+        Usuario usuario = usuarioRepository.findById(idUsuario)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        return ordenCompraRepository.findByUsuario(usuario);
+    }
+
+    /**
+     * 🔹 Obtener una orden específica por ID
+     */
+    public OrdenCompra obtenerOrdenPorId(Integer idOrden) {
+        return ordenCompraRepository.findById(idOrden)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+    }
+
+    /**
+     * 🔹 Actualizar el estado de una orden
+     */
+    @Transactional
+    public OrdenCompra actualizarEstadoOrden(Integer idOrden, OrdenCompra.EstadoOrden nuevoEstado) {
+        OrdenCompra orden = ordenCompraRepository.findById(idOrden)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+
+        orden.setEstado(nuevoEstado);
+        if (nuevoEstado == OrdenCompra.EstadoOrden.ENTREGADO) {
+            orden.setFechaEntrega(LocalDateTime.now()); // Marca la entrega con la fecha actual
         }
 
-        // ✅ Vaciar el carrito después de procesar la compra
-        carritoCompraService.vaciarCarrito(idUsuario);
+        return ordenCompraRepository.save(orden);
+    }
 
-        return "Compra realizada con éxito. ID de Orden: " + orden.getId();
+    /**
+     * 🔹 Cancelar una orden de compra
+     */
+    @Transactional
+    public void cancelarOrden(Integer idOrden) {
+        OrdenCompra orden = ordenCompraRepository.findById(idOrden)
+                .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
+
+        orden.setEstado(OrdenCompra.EstadoOrden.CANCELADO);
+        ordenCompraRepository.save(orden);
     }
 }
-
