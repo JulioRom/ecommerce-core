@@ -1,5 +1,6 @@
 package com.springproject.ecommercecore.service;
 
+import com.springproject.ecommercecore.business.OrdenCompraManager;
 import com.springproject.ecommercecore.model.postgresql.OrdenCompra;
 import com.springproject.ecommercecore.model.postgresql.Usuario;
 import com.springproject.ecommercecore.repository.postgresql.OrdenCompraRepository;
@@ -7,6 +8,7 @@ import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,26 +18,22 @@ public class CompraService {
 
     private final OrdenCompraRepository ordenCompraRepository;
     private final UsuarioRepository usuarioRepository;
+    private final OrdenCompraManager ordenCompraManager;
 
     /**
-     * 🔹 Generar una nueva orden de compra
+     *  Generar una nueva orden de compra.
      */
     @Transactional
     public OrdenCompra generarCompra(Integer idUsuario, LocalDateTime fechaSolicitada) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-        OrdenCompra orden = new OrdenCompra();
-        orden.setUsuario(usuario);
-        orden.setFechaEmision(LocalDateTime.now()); // 🔹 Usamos LocalDateTime en lugar de Date
-        orden.setFechaSolicitada(fechaSolicitada);
-        orden.setEstado(OrdenCompra.EstadoOrden.PENDIENTE);
-
+        OrdenCompra orden = ordenCompraManager.generarOrden(usuario, fechaSolicitada);
         return ordenCompraRepository.save(orden);
     }
 
     /**
-     * 🔹 Obtener todas las órdenes de un usuario
+     *  Obtener todas las órdenes de un usuario.
      */
     public List<OrdenCompra> obtenerOrdenesPorUsuario(Integer idUsuario) {
         Usuario usuario = usuarioRepository.findById(idUsuario)
@@ -44,7 +42,7 @@ public class CompraService {
     }
 
     /**
-     * 🔹 Obtener una orden específica por ID
+     *  Obtener una orden específica por ID.
      */
     public OrdenCompra obtenerOrdenPorId(Integer idOrden) {
         return ordenCompraRepository.findById(idOrden)
@@ -52,30 +50,26 @@ public class CompraService {
     }
 
     /**
-     * 🔹 Actualizar el estado de una orden
+     *  Actualizar el estado de una orden.
      */
     @Transactional
     public OrdenCompra actualizarEstadoOrden(Integer idOrden, OrdenCompra.EstadoOrden nuevoEstado) {
         OrdenCompra orden = ordenCompraRepository.findById(idOrden)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
-        orden.setEstado(nuevoEstado);
-        if (nuevoEstado == OrdenCompra.EstadoOrden.ENTREGADO) {
-            orden.setFechaEntrega(LocalDateTime.now()); // Marca la entrega con la fecha actual
-        }
-
+        ordenCompraManager.actualizarEstadoOrden(orden, nuevoEstado);
         return ordenCompraRepository.save(orden);
     }
 
     /**
-     * 🔹 Cancelar una orden de compra
+     *  Cancelar una orden de compra.
      */
     @Transactional
     public void cancelarOrden(Integer idOrden) {
         OrdenCompra orden = ordenCompraRepository.findById(idOrden)
                 .orElseThrow(() -> new RuntimeException("Orden no encontrada"));
 
-        orden.setEstado(OrdenCompra.EstadoOrden.CANCELADO);
+        ordenCompraManager.cancelarOrden(orden);
         ordenCompraRepository.save(orden);
     }
 }
