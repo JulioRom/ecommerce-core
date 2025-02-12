@@ -7,7 +7,8 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 👉 **CRUD de usuarios** (registro, login, búsqueda, actualización y eliminación)  
 👉 **Gestión de productos** (crear, listar, buscar, actualizar y eliminar)  
 👉 **Carrito de compras** (agregar, eliminar y vaciar productos)  
-👉 **Proceso de compra** (validación de stock y confirmación de pedido)
+👉 **Proceso de compra** (validación de stock y confirmación de pedido)  
+👉 **Documentación con Swagger** (Exploración y prueba de endpoints)
 
 ---
 
@@ -22,6 +23,7 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 - **PostgreSQL** (Base de datos)
 - **MongoDB** (Gestión del carrito de compras)
 - **JWT (Json Web Token)** (Autenticación)
+- **Swagger (Springdoc OpenAPI)** (Documentación de API interactiva)
 - **Maven** (Gestión de dependencias)
 
 ---
@@ -96,6 +98,26 @@ mvn spring-boot:run
 
 ---
 
+## 📖 Documentación con Swagger
+Swagger permite explorar y probar la API de manera interactiva.
+
+📄 **Acceder a la documentación Swagger:**
+```url
+http://localhost:8080/swagger-ui/index.html
+```
+
+📄 **Obtener el archivo OpenAPI en JSON:**
+```url
+http://localhost:8080/v3/api-docs
+```
+
+📄 **Obtener el archivo OpenAPI en YAML:**
+```url
+http://localhost:8080/v3/api-docs.yaml
+```
+
+---
+
 ## 📚 Estructura del Proyecto
 ```
 📂 ecommerce-api
@@ -117,7 +139,8 @@ mvn spring-boot:run
 ✅ Implementación de WebSockets para actualizaciones en tiempo real.  
 ✅ Manejo avanzado de roles y permisos.  
 ✅ Implementación de pagos en línea con Stripe o PayPal.  
-✅ Integración con frontend en **React/Vue/Angular**.
+✅ Integración con frontend en **React/Vue/Angular**.  
+✅ Generación automática de clientes API a partir de OpenAPI.
 
 ---
 
