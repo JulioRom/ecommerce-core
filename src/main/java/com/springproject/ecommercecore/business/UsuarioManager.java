@@ -3,6 +3,7 @@ package com.springproject.ecommercecore.business;
 import com.springproject.ecommercecore.model.postgresql.Usuario;
 import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
 import com.springproject.ecommercecore.security.dto.RegisterRequest;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
+@NoArgsConstructor(force = true)
 public class UsuarioManager {
 
     private final BCryptPasswordEncoder passwordEncoder;

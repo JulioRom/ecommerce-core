@@ -1,6 +1,5 @@
 package com.springproject.ecommercecore.service;
 
-import com.springproject.ecommercecore.business.ProductoManager;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import com.springproject.ecommercecore.repository.postgresql.ProductoRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,53 +13,58 @@ import java.util.Optional;
 public class ProductoService {
 
     private final ProductoRepository productoRepository;
-    private final ProductoManager productoManager;
 
     /**
-     *  Obtener todos los productos
+     * Obtener todos los productos
      */
     public List<Producto> listarProductos() {
         return productoRepository.findAll();
     }
 
     /**
-     *  Buscar producto por código
+     * Buscar producto por código
      */
     public Optional<Producto> buscarPorCodigo(String codigoProducto) {
         return productoRepository.findByCodigoProducto(codigoProducto);
     }
 
     /**
-     *  Restar stock de un producto
+     * Restar stock de un producto
      */
     public void actualizarStock(String codigoProducto, int cantidad) {
         Producto producto = productoRepository.findByCodigoProducto(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        productoManager.reducirStock(producto, cantidad);
+        if (producto.getStock() < cantidad) {
+            throw new IllegalArgumentException("Stock insuficiente para la cantidad solicitada");
+        }
+
+        producto.setStock(producto.getStock() - cantidad);
         productoRepository.save(producto);
     }
 
     /**
-     *  Guardar un nuevo producto
+     * Guardar un nuevo producto
      */
     public Producto guardarProducto(Producto producto) {
         return productoRepository.save(producto);
     }
 
     /**
-     *  Actualizar un producto existente
+     * Actualizar un producto existente
      */
     public Producto actualizarProducto(String codigoProducto, Producto productoDetalles) {
         Producto productoExistente = productoRepository.findByCodigoProducto(codigoProducto)
                 .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado"));
 
-        productoManager.actualizarDatosProducto(productoExistente, productoDetalles);
+        productoExistente.setPrecioUnitario(productoDetalles.getPrecioUnitario());
+        productoExistente.setStock(productoDetalles.getStock());
+
         return productoRepository.save(productoExistente);
     }
 
     /**
-     *  Eliminar un producto
+     * Eliminar un producto
      */
     public void eliminarProducto(String codigoProducto) {
         Producto producto = productoRepository.findByCodigoProducto(codigoProducto)

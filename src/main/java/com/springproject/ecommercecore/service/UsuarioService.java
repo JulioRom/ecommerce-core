@@ -43,6 +43,7 @@ public class UsuarioService {
      */
     public String registrarUsuario(RegisterRequest request) {
         usuarioManager.validarRegistro(usuarioRepository, request);
+
         Usuario newUser = usuarioManager.crearUsuario(request);
         usuarioRepository.save(newUser);
         return "Usuario registrado exitosamente";

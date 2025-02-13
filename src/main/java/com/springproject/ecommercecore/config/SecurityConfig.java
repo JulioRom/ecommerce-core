@@ -35,9 +35,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Permitir login y registro
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // 🔹 Cambiado de hasRole a hasAuthority
                         .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_ADMIN") // 🔹 Cambiado de hasRole a hasAuthority
-                        .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN") ///api/carrito 🔹 Cambiado de hasRole a hasAuthority
+                        .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN") /// 🔹 Cambiado de hasRole a hasAuthority
                         .requestMatchers("api/carrito/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                        .requestMatchers("/api/users/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN") // 🔹 Para múltiples roles
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

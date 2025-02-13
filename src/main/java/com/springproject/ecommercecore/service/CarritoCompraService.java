@@ -1,12 +1,13 @@
 package com.springproject.ecommercecore.service;
 
-import com.springproject.ecommercecore.business.CarritoCompraManager;
 import com.springproject.ecommercecore.model.mongodb.CarritoCompra;
 import com.springproject.ecommercecore.model.mongodb.ProductoCarrito;
 import com.springproject.ecommercecore.repository.mongodb.CarritoCompraRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Service
@@ -14,51 +15,83 @@ import java.util.Optional;
 public class CarritoCompraService {
 
     private final CarritoCompraRepository carritoCompraRepository;
-    private final CarritoCompraManager carritoCompraManager;
 
     /**
-     * 🔹 Agregar producto al carrito con cantidad específica.
+     * Agregar un producto al carrito de compras
      */
     public void agregarProducto(String idUsuario, ProductoCarrito nuevoProducto) {
-        CarritoCompra carrito = carritoCompraRepository.findById(idUsuario)
-                .orElseGet(() -> carritoCompraManager.crearCarrito(idUsuario));
+        CarritoCompra carrito = obtenerCarritoPorIdOUsuario(idUsuario)
+                .orElseGet(() -> crearCarrito(idUsuario));
 
-        carritoCompraManager.agregarProducto(carrito, nuevoProducto);
+        Optional<ProductoCarrito> productoExistente = carrito.getProductos().stream()
+                .filter(p -> p.getCodigoProducto().equals(nuevoProducto.getCodigoProducto()))
+                .findFirst();
+
+        if (productoExistente.isPresent()) {
+            productoExistente.get().setCantidad(productoExistente.get().getCantidad() + nuevoProducto.getCantidad());
+        } else {
+            carrito.getProductos().add(nuevoProducto);
+        }
+
+        carrito.setUpdatedAt(LocalDateTime.now());
         carritoCompraRepository.save(carrito);
     }
 
     /**
-     * 🔹 Obtener el carrito de un usuario.
+     * Obtener el carrito ya sea por Mongo ID o por idUsuario
      */
-    public Optional<CarritoCompra> obtenerCarrito(String idUsuario) {
-        return carritoCompraRepository.findById(idUsuario);
+    public Optional<CarritoCompra> obtenerCarritoPorIdOUsuario(String identificador) {
+        // Primero intentamos buscar por Mongo ID
+        Optional<CarritoCompra> carrito = carritoCompraRepository.findById(identificador);
+
+        // Si no existe por Mongo ID, intentamos buscar por el idUsuario
+        if (carrito.isEmpty()) {
+            carrito = carritoCompraRepository.findAll()
+                    .stream()
+                    .filter(c -> c.getIdUsuario().equals(identificador))
+                    .findFirst();
+        }
+
+        return carrito;
     }
 
     /**
-     * 🔹 Eliminar un producto del carrito.
+     * Eliminar un producto específico del carrito
      */
-    public boolean eliminarProducto(String idUsuario, String codigoProducto) {
-        Optional<CarritoCompra> carritoOpt = carritoCompraRepository.findById(idUsuario);
-        if (carritoOpt.isEmpty()) {
-            return false;
+    public boolean removerProductoDelCarrito(String identificador, String codigoProducto) {
+        Optional<CarritoCompra> carritoOptional = obtenerCarritoPorIdOUsuario(identificador);
+
+        if (carritoOptional.isPresent()) {
+            CarritoCompra carrito = carritoOptional.get();
+            boolean removed = carrito.getProductos().removeIf(p -> p.getCodigoProducto().equals(codigoProducto));
+
+            if (removed) {
+                carrito.setUpdatedAt(LocalDateTime.now());
+                carritoCompraRepository.save(carrito);
+            }
+            return removed;
         }
-
-        CarritoCompra carrito = carritoOpt.get();
-        boolean removed = carritoCompraManager.eliminarProducto(carrito, codigoProducto);
-
-        if (removed) {
-            carritoCompraRepository.save(carrito);
-        }
-
-        return removed;
+        return false;
     }
 
     /**
-     * 🔹 Vaciar el carrito completamente.
+     * Crear un nuevo carrito para el usuario
      */
-    public boolean vaciarCarrito(String idUsuario) {
-        if (carritoCompraRepository.existsById(idUsuario)) {
-            carritoCompraRepository.deleteById(idUsuario);
+    private CarritoCompra crearCarrito(String idUsuario) {
+        CarritoCompra nuevoCarrito = new CarritoCompra(
+                null, idUsuario, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now()
+        );
+        return carritoCompraRepository.save(nuevoCarrito);
+    }
+
+    /**
+     * Vaciar el carrito de un usuario
+     */
+    public boolean vaciarCarrito(String identificador) {
+        Optional<CarritoCompra> carritoOptional = obtenerCarritoPorIdOUsuario(identificador);
+
+        if (carritoOptional.isPresent()) {
+            carritoCompraRepository.delete(carritoOptional.get());
             return true;
         }
         return false;

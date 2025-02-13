@@ -22,51 +22,47 @@ import java.util.Optional;
 public class CarritoCompraController {
     private final CarritoCompraService carritoCompraService;
 
-    // Agregar producto con cantidad específica
     @Operation(summary = "Agregar producto al carrito", description = "Añade un producto al carrito de un usuario.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Producto agregado correctamente"),
             @ApiResponse(responseCode = "400", description = "Solicitud inválida")
     })
-    @PostMapping("/{idUsuario}")
-    public ResponseEntity<String> agregarProducto(@PathVariable String idUsuario, @RequestBody ProductoCarrito producto) {
-        carritoCompraService.agregarProducto(idUsuario, producto);
+    @PostMapping("/{identificador}")
+    public ResponseEntity<String> agregarProducto(@PathVariable String identificador, @RequestBody ProductoCarrito producto) {
+        carritoCompraService.agregarProducto(identificador, producto);
         return ResponseEntity.ok("Producto agregado o actualizado en el carrito.");
     }
 
-    // Obtener carrito del usuario
     @Operation(summary = "Obtener el carrito de un usuario", description = "Devuelve el carrito de compras de un usuario.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Carrito obtenido correctamente"),
             @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
     })
-    @GetMapping("/{idUsuario}")
-    public ResponseEntity<?> obtenerCarrito(@PathVariable String idUsuario) {
-        Optional<CarritoCompra> carrito = carritoCompraService.obtenerCarrito(idUsuario);
+    @GetMapping("/{identificador}")
+    public ResponseEntity<CarritoCompra> obtenerCarrito(@PathVariable String identificador) {
+        Optional<CarritoCompra> carrito = carritoCompraService.obtenerCarritoPorIdOUsuario(identificador);
         return carrito.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    // Eliminar un producto del carrito
     @Operation(summary = "Eliminar un producto del carrito", description = "Elimina un producto específico del carrito de un usuario.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Producto eliminado correctamente"),
             @ApiResponse(responseCode = "404", description = "Producto no encontrado en el carrito")
     })
-    @DeleteMapping("/{idUsuario}/{codigoProducto}")
-    public ResponseEntity<String> eliminarProducto(@PathVariable String idUsuario, @PathVariable String codigoProducto) {
-        boolean eliminado = carritoCompraService.eliminarProducto(idUsuario, codigoProducto);
+    @DeleteMapping("/{identificador}/{codigoProducto}")
+    public ResponseEntity<String> eliminarProducto(@PathVariable String identificador, @PathVariable String codigoProducto) {
+        boolean eliminado = carritoCompraService.removerProductoDelCarrito(identificador, codigoProducto);
         return eliminado ? ResponseEntity.ok("Producto eliminado del carrito.") : ResponseEntity.notFound().build();
     }
 
-    // Vaciar el carrito completamente
     @Operation(summary = "Vaciar el carrito de compras", description = "Elimina todos los productos del carrito de un usuario.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Carrito vaciado correctamente"),
             @ApiResponse(responseCode = "404", description = "Carrito no encontrado")
     })
-    @DeleteMapping("/{idUsuario}")
-    public ResponseEntity<String> vaciarCarrito(@PathVariable String idUsuario) {
-        boolean vaciado = carritoCompraService.vaciarCarrito(idUsuario);
+    @DeleteMapping("/{identificador}")
+    public ResponseEntity<String> vaciarCarrito(@PathVariable String identificador) {
+        boolean vaciado = carritoCompraService.vaciarCarrito(identificador);
         return vaciado ? ResponseEntity.ok("Carrito vaciado.") : ResponseEntity.notFound().build();
     }
 }

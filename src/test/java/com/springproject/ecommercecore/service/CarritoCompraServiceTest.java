@@ -1,4 +1,5 @@
 package com.springproject.ecommercecore.service;
 
-public class CarritoCompraServiceTest {
+class CarritoCompraServiceTest {
+
 }
