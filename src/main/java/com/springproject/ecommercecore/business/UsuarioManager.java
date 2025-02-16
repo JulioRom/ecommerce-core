@@ -1,7 +1,7 @@
 package com.springproject.ecommercecore.business;
 
 import com.springproject.ecommercecore.model.postgresql.Usuario;
-import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
+import com.springproject.ecommercecore.dataaccess.UsuarioDataAccess;
 import com.springproject.ecommercecore.security.dto.RegisterRequest;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -12,19 +12,19 @@ import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
-@NoArgsConstructor(force = true)
 public class UsuarioManager {
 
+    private final UsuarioDataAccess usuarioDataAccess;
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
      *  Validar si un usuario puede ser registrado
      */
-    public void validarRegistro(UsuarioRepository usuarioRepository, RegisterRequest request) {
-        if (usuarioRepository.existsByUsername(request.getUsername())) {
+    public void validarRegistro(RegisterRequest request) {
+        if (usuarioDataAccess.existePorUsername(request.getUsername())) {
             throw new IllegalArgumentException("El usuario ya existe");
         }
-        if (usuarioRepository.existsByEmail(request.getEmail())) {
+        if (usuarioDataAccess.existePorEmail(request.getEmail())) {
             throw new IllegalArgumentException("El correo electrónico ya está registrado");
         }
     }
@@ -49,3 +49,4 @@ public class UsuarioManager {
         usuario.setPassword(passwordEncoder.encode(request.getPassword()));
     }
 }
+

@@ -1,10 +1,11 @@
 package com.springproject.ecommercecore.model.postgresql;
 
 import jakarta.persistence.*;
-import lombok.*;
-
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "ordenes_compra")
@@ -13,22 +14,35 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrdenCompra {
+
+    public OrdenCompra(Usuario usuario, LocalDateTime fechaSolicitada) {
+        this.usuario = usuario;
+        this.fechaEmision = LocalDateTime.now();
+        this.fechaSolicitada = fechaSolicitada;
+        this.estado = EstadoOrden.PENDIENTE;
+    }
+
+    public enum EstadoOrden {
+        PENDIENTE, PROCESANDO, ENVIADO, ENTREGADO, CANCELADO
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
+
+    @Column(nullable = false)
     private LocalDateTime fechaEmision;
-    private LocalDateTime fechaEntrega;
+
+    @Column(nullable = false)
     private LocalDateTime fechaSolicitada;
 
-    @ManyToOne
-    @JoinColumn(name = "id_usuario", nullable = false)
-    private Usuario usuario;
+    private LocalDateTime fechaEntrega;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoOrden estado;
-
-    public enum EstadoOrden {
-        PENDIENTE, PAGADO, ENVIADO, ENTREGADO, CANCELADO
-    }
 }

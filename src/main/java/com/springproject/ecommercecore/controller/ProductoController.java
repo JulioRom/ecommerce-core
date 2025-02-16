@@ -11,6 +11,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -66,13 +67,9 @@ public class ProductoController {
             @ApiResponse(responseCode = "400", description = "Datos inválidos en la solicitud")
     })
     @PutMapping("/{codigoProducto}")
-    public ResponseEntity<?> actualizarProducto(@PathVariable String codigoProducto, @RequestBody Producto productoDetalles) {
-        try {
-            Producto productoActualizado = productoService.actualizarProducto(codigoProducto, productoDetalles);
-            return ResponseEntity.ok(productoActualizado);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(404).body("Error: " + e.getMessage());
-        }
+    public ResponseEntity<Producto> actualizarProducto(@PathVariable String codigoProducto, @Valid @RequestBody Producto productoDetalles) {
+        Producto productoActualizado = productoService.actualizarProducto(codigoProducto, productoDetalles);
+        return ResponseEntity.ok(productoActualizado);
     }
 
     // Eliminar un producto (DELETE)
@@ -86,6 +83,7 @@ public class ProductoController {
         productoService.eliminarProducto(codigoProducto);
         return ResponseEntity.noContent().build();
     }
+
 
 }
 

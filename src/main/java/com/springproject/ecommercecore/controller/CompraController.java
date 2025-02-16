@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Tag(name = "Compras", description = "Operaciones relacionadas con la gestión de compras")
 @RestController
@@ -36,22 +37,38 @@ public class CompraController {
     public ResponseEntity<OrdenCompra> generarCompra(
             @PathVariable Integer idUsuario,
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fechaSolicitada) {
-        OrdenCompra orden = compraService.generarCompra(idUsuario, fechaSolicitada);
+        OrdenCompra orden = compraService.generarOrden(idUsuario, fechaSolicitada);
         return ResponseEntity.ok(orden);
     }
 
     /**
-     * 🔹 Obtener todas las órdenes de un usuario
+     * 🔹 Obtener órdenes de un usuario por ID
      */
-    @Operation(summary = "Obtener órdenes de un usuario", description = "Lista todas las órdenes de compra asociadas a un usuario.")
+    @Operation(summary = "Obtener órdenes de un usuario con id", description = "Lista todas las órdenes de compra asociadas a un usuario.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Órdenes obtenidas correctamente"),
             @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
     })
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
-    @GetMapping("/usuario/{idUsuario}")
-    public ResponseEntity<List<OrdenCompra>> obtenerOrdenesPorUsuario(@PathVariable Integer idUsuario) {
-        return ResponseEntity.ok(compraService.obtenerOrdenesPorUsuario(idUsuario));
+    @GetMapping("/usuario/id/{idUsuario}")
+    public ResponseEntity<List<OrdenCompra>> obtenerOrdenesPorUsuarioId(@PathVariable Long idUsuario) {
+        List<OrdenCompra> ordenes = compraService.obtenerOrdenesPorUsuarioId(idUsuario);
+        return ordenes.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(ordenes);
+    }
+
+    /**
+     * 🔹 Obtener todas las órdenes de un usuario
+     */
+    @Operation(summary = "Obtener órdenes de un usuario con username", description = "Lista todas las órdenes de compra asociadas a un usuario.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Órdenes obtenidas correctamente"),
+            @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+    })
+    @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
+    @GetMapping("/usuario/username/{username}")
+    public ResponseEntity<List<OrdenCompra>> obtenerOrdenesPorUsername(@PathVariable String username) {
+        List<OrdenCompra> ordenes = compraService.obtenerOrdenesPorUsername(username);
+        return ordenes.isEmpty() ? ResponseEntity.notFound().build() : ResponseEntity.ok(ordenes);
     }
 
     /**
@@ -64,7 +81,7 @@ public class CompraController {
     })
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @GetMapping("/{idOrden}")
-    public ResponseEntity<OrdenCompra> obtenerOrdenPorId(@PathVariable Integer idOrden) {
+    public ResponseEntity<Optional<OrdenCompra>> obtenerOrdenPorId(@PathVariable Integer idOrden) {
         return ResponseEntity.ok(compraService.obtenerOrdenPorId(idOrden));
     }
 
@@ -95,7 +112,11 @@ public class CompraController {
     @PreAuthorize("hasAnyRole('USER', 'ADMIN')")
     @DeleteMapping("/{idOrden}/cancelar")
     public ResponseEntity<String> cancelarOrden(@PathVariable Integer idOrden) {
-        compraService.cancelarOrden(idOrden);
-        return ResponseEntity.ok("Orden cancelada correctamente.");
+        try {
+            compraService.cancelarOrden(idOrden);
+            return ResponseEntity.ok("Orden cancelada correctamente.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
+        }
     }
 }

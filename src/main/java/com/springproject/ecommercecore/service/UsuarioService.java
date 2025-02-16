@@ -1,11 +1,12 @@
 package com.springproject.ecommercecore.service;
 
 import com.springproject.ecommercecore.business.UsuarioManager;
+import com.springproject.ecommercecore.dataaccess.UsuarioDataAccess;
 import com.springproject.ecommercecore.model.postgresql.Usuario;
-import com.springproject.ecommercecore.repository.postgresql.UsuarioRepository;
 import com.springproject.ecommercecore.security.dto.RegisterRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -14,61 +15,70 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UsuarioService {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioDataAccess usuarioDataAccess;
     private final UsuarioManager usuarioManager;
 
     /**
-     *  Listar todos los usuarios
+     * Listar todos los usuarios activos.
      */
     public List<Usuario> listarUsuarios() {
-        return usuarioRepository.findAll();
+        return usuarioDataAccess.buscarTodosUsuarios(); // Ahora devuelve usuarios activos e inactivos
     }
 
     /**
-     *  Obtener usuario por ID
+     * Obtener usuario por ID.
      */
     public Optional<Usuario> obtenerPorId(Integer id) {
-        return usuarioRepository.findById(id);
+        return usuarioDataAccess.buscarPorId(id);
     }
 
     /**
-     *  Obtener usuario por username
+     * Obtener usuario por username.
      */
     public Optional<Usuario> obtenerPorUsername(String username) {
-        return usuarioRepository.findByUsername(username);
+        return usuarioDataAccess.buscarPorUsername(username);
     }
 
     /**
-     *  Registrar un nuevo usuario
+     * Registrar un nuevo usuario.
      */
+    @Transactional
     public String registrarUsuario(RegisterRequest request) {
-        usuarioManager.validarRegistro(usuarioRepository, request);
+        if (usuarioDataAccess.existePorUsername(request.getUsername())) {
+            throw new IllegalArgumentException("El usuario ya existe");
+        }
+        if (usuarioDataAccess.existePorEmail(request.getEmail())) {
+            throw new IllegalArgumentException("El correo electrónico ya está registrado");
+        }
 
         Usuario newUser = usuarioManager.crearUsuario(request);
-        usuarioRepository.save(newUser);
+        usuarioDataAccess.guardarUsuario(newUser);
         return "Usuario registrado exitosamente";
     }
 
     /**
-     *  Actualizar usuario existente
+     * Actualizar usuario existente.
      */
+    @Transactional
     public String actualizarUsuario(String username, RegisterRequest request) {
-        Usuario usuario = usuarioRepository.findByUsername(username)
+        Usuario usuario = usuarioDataAccess.buscarPorUsername(username)
                 .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
 
         usuarioManager.actualizarUsuario(usuario, request);
-        usuarioRepository.save(usuario);
+        usuarioDataAccess.guardarUsuario(usuario);
         return "Usuario actualizado correctamente";
     }
 
     /**
-     *  Eliminar usuario por ID
+     * Eliminar usuario por ID.
      */
+    @Transactional
     public boolean eliminarUsuario(Integer id) {
-        if (usuarioRepository.existsById(id)) {
-            usuarioRepository.deleteById(id);
-            return true;
+        if (!usuarioDataAccess.existePorId(id)) {
+            throw new IllegalArgumentException("Usuario no encontrado");
         }
-        return false;
+        usuarioDataAccess.eliminarPorId(id);
+        return true;
     }
+
 }

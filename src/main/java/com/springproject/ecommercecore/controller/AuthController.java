@@ -52,7 +52,7 @@ public class AuthController {
 
     /**
      *  Endpoint para registrar un nuevo usuario
-     *  Valida que el usuario no exista antes de crearlo
+     *  Válida que el usuario no exista antes de crearlo
      */
     @Operation(summary = "Registrar un nuevo usuario", description = "Crea un nuevo usuario en la base de datos.")
     @ApiResponses({

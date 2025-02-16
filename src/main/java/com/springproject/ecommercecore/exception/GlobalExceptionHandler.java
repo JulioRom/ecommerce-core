@@ -31,12 +31,16 @@ public class GlobalExceptionHandler {
 
     //  Manejo de errores de validación en DTOs
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> manejarValidaciones(MethodArgumentNotValidException ex) {
-        Map<String, String> errors = new HashMap<>();
-
+    public ResponseEntity<Map<String, Object>> manejarValidaciones(MethodArgumentNotValidException ex) {
+        Map<String, String> errores = new HashMap<>();
         ex.getBindingResult().getFieldErrors().forEach(error ->
-                errors.put(error.getField(), error.getDefaultMessage()));
+                errores.put(error.getField(), error.getDefaultMessage()));
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
+        Map<String, Object> response = new HashMap<>();
+        response.put("mensaje", "Error en la validación de datos");
+        response.put("errores", errores);
+
+        return ResponseEntity.badRequest().body(response);
     }
+
 }

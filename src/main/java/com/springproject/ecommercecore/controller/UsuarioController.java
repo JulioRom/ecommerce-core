@@ -14,6 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.Optional;
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
+@Validated
 public class UsuarioController {
 
     private final UsuarioService usuarioService;
@@ -89,12 +91,15 @@ public class UsuarioController {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(
                                     value = "{\n  \"username\": \"usuario123\",\n  \"email\": \"usuario@email.com\",\n  \"password\": \"nuevacontraseña\"\n}")))
-            @RequestBody RegisterRequest request) {
+            @Valid @RequestBody RegisterRequest request) {
         try {
             String response = usuarioService.actualizarUsuario(username, request);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            if (e.getMessage().equals("Usuario no encontrado")) {
+                return ResponseEntity.status(404).body("Error: " + e.getMessage()); // 🔹 Retorna 404 si el usuario no existe
+            }
+            return ResponseEntity.badRequest().body("Error: " + e.getMessage()); // 🔹 Retorna 400 si hay otro error
         }
     }
 
@@ -109,9 +114,12 @@ public class UsuarioController {
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarUsuario(@PathVariable Integer id) {
-        if (usuarioService.eliminarUsuario(id)) {
+        try {
+            usuarioService.eliminarUsuario(id);
             return ResponseEntity.ok("Usuario eliminado correctamente.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body("Error: " + e.getMessage());
         }
-        return ResponseEntity.notFound().build();
     }
+
 }
