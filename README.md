@@ -13,60 +13,38 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 ---
 
 ## 🎠 Tecnologías Utilizadas
-- **Spring Boot 3**
-- **Spring Security** (Autenticación JWT)
-- **Spring Data JPA** (Persistencia con PostgreSQL)
-- **Spring Web** (API REST)
-- **Lombok** (Reducción de código boilerplate)
-- **Hibernate Validator** (Validación de datos)
-- **Jakarta Validation**
-- **PostgreSQL** (Base de datos)
+- **Spring Boot 3.4.2** - Framework principal
+- **Spring Security & JWT** - Autenticación y autorización
+- **Spring Data JPA** - Acceso a PostgreSQL
+- **Spring Data MongoDB** - Acceso a MongoDB
+- **Hibernate** - ORM para PostgreSQL
 - **MongoDB** (Gestión del carrito de compras)
-- **JWT (Json Web Token)** (Autenticación)
-- **Swagger (Springdoc OpenAPI)** (Documentación de API interactiva)
+- **Jakarta Validation** - Validaciones de datos
+- **Lombok** - Reducción de código repetitivo
+- **MapStruct** - Mapeo de DTOs
+- **Swagger OpenAPI** - Documentación de la API
+- **JUnit 5 & Mockito** - Pruebas unitarias e integración
+- **Docker & Docker Compose** - Contenerización del sistema
 - **Maven** (Gestión de dependencias)
 
 ---
 
-## 📌 Instalación y Configuración
+## 🛠️ Instalación y Configuración
 
-### **1️⃣ Clonar el repositorio**
-```bash
-git clone https://github.com/JulioRom/ecommerce-core.git
-cd ecommerce-core
-```
-
-### **2️⃣ Configurar Base de Datos**
-Asegúrate de que PostgreSQL y MongoDB estén instalados y configurados.
-
-📉 **Crea la base de datos en PostgreSQL:**
-```sql
-CREATE DATABASE ecommerce_db;
-```
-
-📉 **Configura `application.properties`:**
-```properties
-# Configuración PostgreSQL
-spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce_db
-spring.datasource.username=tu_usuario
-spring.datasource.password=tu_contraseña
-
-# Configuración MongoDB
-spring.data.mongodb.uri=mongodb://localhost:27017/ecommerce
-
-# JWT Config
-jwt.secret=clave-secreta-segura
-jwt.expiration=3600000  # 1 hora en milisegundos
-```
-
-### **3️⃣ Compilar y Ejecutar**
-```bash
-mvn clean install
-mvn spring-boot:run
-```
-
-📉 **La API se iniciará en** `http://localhost:8080`
-
+1. Clonar el repositorio:
+   ```sh
+   git clone https://github.com/tu-repo/ecommerce-api.git
+   cd ecommerce-api
+   ```
+2. Configurar el archivo `.env` o `application.yml` con las credenciales de BD.
+3. Ejecutar con Docker Compose:
+   ```sh
+   docker-compose up -d
+   ```
+4. Para ejecutar las pruebas:
+   ```sh
+   mvn test
+   ```
 ---
 
 ## 🔥 Endpoints Principales
@@ -88,13 +66,34 @@ mvn spring-boot:run
 
 ---
 
-## 🛡️ Autenticación con JWT
-1. **Registrarse (`/api/auth/register`)**
-2. **Iniciar sesión (`/api/auth/login`)** y obtener el token JWT.
-3. **Usar el token en las solicitudes protegidas**, agregándolo en los headers:
+## 🔒 Autenticación y Seguridad
+
+1. **Registro de Usuario:**
+   ```http
+   POST api/auth/register
    ```
-   Authorization: Bearer <TOKEN>
+2. **Inicio de Sesión:**
+   ```http
+   POST api/auth/login
    ```
+   - Respuesta: JWT Token
+3. **Acceso a Endpoints Protegidos:**
+   - Enviar el token en el encabezado:
+     ```http
+     Authorization: Bearer <token>
+     ```
+---
+
+## ✅ Pruebas y Cobertura
+
+Se han implementado **pruebas unitarias y de integración** para validar la funcionalidad:
+
+| Servicio                | Pruebas Unitarias | Pruebas de Integración | Observaciones |
+|-------------------------|------------------|------------------------|--------------|
+| `UsuarioService`        | ✅ Sí            | ✅ Necesario           | Validar autenticación y persistencia |
+| `ProductoService`       | ✅ Sí            | ⚠️ Opcional            | Cobertura completa con unitarias |
+| `CompraService`         | ✅ Sí            | ✅ Necesario           | Validar persistencia en PostgreSQL |
+| `CarritoCompraService`  | ✅ Sí            | ✅ Necesario           | Validar persistencia en MongoDB |
 
 ---
 
@@ -127,6 +126,10 @@ http://localhost:8080/v3/api-docs.yaml
    ┗📂 repository    # Repositorios JPA y MongoDB
    ┗📂 security      # Configuración de JWT y seguridad
    ┗📂 service       # Lógica de negocio
+   ┗📂 dataaccess    # Acceso a base de datos (PostgreSQL/MongoDB)
+   ┗📂 exception     # Manejo de excepciones globales
+   ┗📂 config        # Configuraciones de la aplicación
+
    ┗📚 EcommerceApplication.java  # Clase principal
  ┗📂 src/main/resources
    ┗📚 application.properties  # Configuración del proyecto
@@ -136,12 +139,11 @@ http://localhost:8080/v3/api-docs.yaml
 ---
 
 ## 🚀 Mejoras Futuras
-✅ Implementación de WebSockets para actualizaciones en tiempo real.  
-✅ Manejo avanzado de roles y permisos.  
-✅ Implementación de pagos en línea con Stripe o PayPal.  
-✅ Integración con frontend en **React/Vue/Angular**.  
-✅ Generación automática de clientes API a partir de OpenAPI.
 
+- Integración con **pasarelas de pago**.
+- Implementación de **WebSockets** para notificaciones en tiempo real.
+- Desarrollo del **frontend en React o Angular**.
+- Optimización de consultas con **Redis Cache**.
 ---
 
 ## 🧑‍💻 Autor
