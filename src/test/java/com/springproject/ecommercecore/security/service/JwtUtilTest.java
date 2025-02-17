@@ -1,5 +1,6 @@
-package com.springproject.ecommercecore.security;
+package com.springproject.ecommercecore.security.service;
 
+import com.springproject.ecommercecore.security.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.User;

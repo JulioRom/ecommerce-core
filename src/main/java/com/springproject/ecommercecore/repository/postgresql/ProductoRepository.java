@@ -12,5 +12,5 @@ public interface ProductoRepository extends JpaRepository<Producto, Integer> {
     Optional<Producto> findByCodigoProducto(String codigoProducto);
     @Modifying
     @Query("UPDATE Producto p SET p.stock = p.stock - :cantidad WHERE p.codigoProducto = :codigoProducto AND p.stock >= :cantidad")
-    int descontarStock(@Param("codigoProducto") String codigoProducto, @Param("cantidad") int cantidad);
+    void descontarStock(@Param("codigoProducto") String codigoProducto, @Param("cantidad") int cantidad);
 }

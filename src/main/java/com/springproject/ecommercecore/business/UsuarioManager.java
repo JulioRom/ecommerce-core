@@ -18,27 +18,15 @@ public class UsuarioManager {
     private final BCryptPasswordEncoder passwordEncoder;
 
     /**
-     *  Validar si un usuario puede ser registrado
-     */
-    public void validarRegistro(RegisterRequest request) {
-        if (usuarioDataAccess.existePorUsername(request.getUsername())) {
-            throw new IllegalArgumentException("El usuario ya existe");
-        }
-        if (usuarioDataAccess.existePorEmail(request.getEmail())) {
-            throw new IllegalArgumentException("El correo electrónico ya está registrado");
-        }
-    }
-
-    /**
      *  Crear un nuevo usuario con datos validados
      */
     public Usuario crearUsuario(RegisterRequest request) {
-        Usuario newUser = new Usuario();
-        newUser.setUsername(request.getUsername());
-        newUser.setPassword(passwordEncoder.encode(request.getPassword()));
-        newUser.setEmail(request.getEmail());
-        newUser.setRoles(Set.of("ROLE_" + request.getRole().toUpperCase()));
-        return newUser;
+        return new Usuario(
+        request.getUsername(),
+        passwordEncoder.encode(request.getPassword()),
+        request.getEmail(),
+        Set.of("ROLE_" + request.getRole().toUpperCase()),
+        true);
     }
 
     /**

@@ -25,11 +25,11 @@ public class JwtUtil {
     private long expirationTime;
 
     public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = Map.of(
-                "roles", userDetails.getAuthorities().stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList())
-        );
+        List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
+
+        Map<String, Object> claims = Map.of("roles", roles);
 
         return Jwts.builder()
                 .setClaims(claims)
@@ -77,6 +77,15 @@ public class JwtUtil {
                 .getBody();
         return claimsResolver.apply(claims);
     }
+
+    public Claims extractAllClaims(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSigningKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secretKey));

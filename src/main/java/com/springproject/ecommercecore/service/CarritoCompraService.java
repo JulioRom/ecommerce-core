@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -21,23 +22,27 @@ public class CarritoCompraService {
      * Agregar un producto al carrito de compras.
      */
     @Transactional
-    public void agregarProducto(String idUsuario, ProductoCarrito nuevoProducto) {
-        CarritoCompra carrito = carritoCompraDataAccess.buscarPorIdOUsuario(idUsuario)
-                .orElseGet(() -> crearCarrito(idUsuario));
+    public void agregarProducto(String idUsuario, ProductoCarrito productoCarrito) {
+        Optional<CarritoCompra> carritoOptional = carritoCompraDataAccess.buscarPorIdOUsuario(idUsuario);
 
-        Optional<ProductoCarrito> productoExistente = carrito.getProductos().stream()
-                .filter(p -> p.getCodigoProducto().equals(nuevoProducto.getCodigoProducto()))
-                .findFirst();
+        CarritoCompra carrito = carritoOptional.orElseGet(() -> {
+            CarritoCompra nuevoCarrito = new CarritoCompra(null, idUsuario, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now());
+            return carritoCompraDataAccess.guardarCarrito(nuevoCarrito);
+        });
 
-        if (productoExistente.isPresent()) {
-            productoExistente.get().setCantidad(productoExistente.get().getCantidad() + nuevoProducto.getCantidad());
-        } else {
-            carrito.getProductos().add(nuevoProducto);
+        if (carrito.getProductos() == null) {
+            carrito.setProductos(new ArrayList<>());
+        } else if (!(carrito.getProductos() instanceof ArrayList)) {
+            carrito.setProductos(new ArrayList<>(carrito.getProductos()));
         }
 
+        carrito.getProductos().add(productoCarrito);
         carrito.setUpdatedAt(LocalDateTime.now());
         carritoCompraDataAccess.guardarCarrito(carrito);
     }
+
+
+
 
     /**
      * Obtener un carrito por ID o por ID de usuario.
@@ -55,9 +60,12 @@ public class CarritoCompraService {
 
         if (carritoOptional.isPresent()) {
             CarritoCompra carrito = carritoOptional.get();
-            boolean removed = carrito.getProductos().removeIf(p -> p.getCodigoProducto().equals(codigoProducto));
+            List<ProductoCarrito> productosModificables = new ArrayList<>(carrito.getProductos()); // 🔹 Convertir a `ArrayList`
+
+            boolean removed = productosModificables.removeIf(p -> p.getCodigoProducto().equals(codigoProducto));
 
             if (removed) {
+                carrito.setProductos(productosModificables);
                 carrito.setUpdatedAt(LocalDateTime.now());
                 carritoCompraDataAccess.guardarCarrito(carrito);
             }
@@ -66,22 +74,27 @@ public class CarritoCompraService {
         return false;
     }
 
+
     /**
      * Vaciar el carrito de un usuario.
      */
     @Transactional
     public boolean vaciarCarrito(String idUsuario) {
+        if (carritoCompraDataAccess.buscarPorIdOUsuario(idUsuario).isEmpty()) {
+            return false; // Retorna false si el carrito no existe
+        }
         carritoCompraDataAccess.eliminarCarritoPorUsuarioId(idUsuario);
         return true;
     }
+
 
     /**
      * Crear un nuevo carrito para el usuario.
      */
     private CarritoCompra crearCarrito(String idUsuario) {
-        CarritoCompra nuevoCarrito = new CarritoCompra(
+        return carritoCompraDataAccess.guardarCarrito(new CarritoCompra(
                 null, idUsuario, new ArrayList<>(), LocalDateTime.now(), LocalDateTime.now()
-        );
-        return carritoCompraDataAccess.guardarCarrito(nuevoCarrito);
+        ));
     }
+
 }

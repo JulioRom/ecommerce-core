@@ -40,9 +40,12 @@ public class ProductoDataAccess {
      * Descontar stock de un producto.
      */
     @Transactional
-    public boolean descontarStock(String codigoProducto, int cantidad) {
-        return productoRepository.descontarStock(codigoProducto, cantidad) > 0;
+    public Producto descontarStock(String codigoProducto, int cantidad) {
+        productoRepository.descontarStock(codigoProducto, cantidad);
+        return productoRepository.findByCodigoProducto(codigoProducto)
+                .orElseThrow(() -> new IllegalArgumentException("Producto no encontrado después de actualizar stock"));
     }
+
 
     /**
      * Actualizar un producto existente.

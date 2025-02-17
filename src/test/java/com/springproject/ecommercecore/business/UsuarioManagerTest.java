@@ -36,34 +36,6 @@ class UsuarioManagerTest {
     }
 
     @Test
-    void validarRegistro_UsuarioExistente_DeberiaLanzarExcepcion() {
-        when(usuarioDataAccess.existePorUsername(request.getUsername())).thenReturn(true);
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                usuarioManager.validarRegistro(request));
-
-        assertEquals("El usuario ya existe", exception.getMessage());
-    }
-
-    @Test
-    void validarRegistro_EmailExistente_DeberiaLanzarExcepcion() {
-        when(usuarioDataAccess.existePorEmail(request.getEmail())).thenReturn(true);
-
-        Exception exception = assertThrows(IllegalArgumentException.class, () ->
-                usuarioManager.validarRegistro(request));
-
-        assertEquals("El correo electrónico ya está registrado", exception.getMessage());
-    }
-
-    @Test
-    void validarRegistro_UsuarioYEmailNoExisten_NoLanzaExcepcion() {
-        when(usuarioDataAccess.existePorUsername(request.getUsername())).thenReturn(false);
-        when(usuarioDataAccess.existePorEmail(request.getEmail())).thenReturn(false);
-
-        assertDoesNotThrow(() -> usuarioManager.validarRegistro(request));
-    }
-
-    @Test
     void crearUsuario_DeberiaHashearPassword() {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         UsuarioManager usuarioManager = new UsuarioManager(usuarioDataAccess, encoder);

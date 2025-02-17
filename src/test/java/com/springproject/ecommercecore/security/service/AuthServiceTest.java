@@ -1,5 +1,8 @@
-package com.springproject.ecommercecore.security;
+package com.springproject.ecommercecore.security.service;
 
+import com.springproject.ecommercecore.security.AuthService;
+import com.springproject.ecommercecore.security.TokenService;
+import com.springproject.ecommercecore.security.UserDetailsServiceImpl;
 import com.springproject.ecommercecore.security.dto.AuthRequest;
 import com.springproject.ecommercecore.security.dto.AuthResponse;
 import org.junit.jupiter.api.BeforeEach;

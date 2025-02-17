@@ -1,5 +1,6 @@
 package com.springproject.ecommercecore.controller;
 
+import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import com.springproject.ecommercecore.service.ProductoService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -42,10 +43,9 @@ public class ProductoController {
     })
     @GetMapping("/{codigoProducto}")
     public ResponseEntity<Producto> obtenerProducto(@PathVariable String codigoProducto) {
-        return productoService.buscarPorCodigo(codigoProducto)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+        return ResponseEntity.ok(productoService.buscarPorCodigo(codigoProducto));
     }
+
 
     // Agregar un producto (POST)
     @Operation(summary = "Agregar un nuevo producto", description = "Crea un nuevo producto en la base de datos.", security = @SecurityRequirement(name = "bearerAuth"))

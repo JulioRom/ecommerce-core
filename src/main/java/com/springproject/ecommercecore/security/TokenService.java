@@ -1,8 +1,12 @@
 package com.springproject.ecommercecore.security;
 
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -21,5 +25,20 @@ public class TokenService {
     public String extractUsername(String token) {
         return jwtUtil.extractUsername(token);
     }
+
+    public List<String> extractRoles(String token) {
+        Claims claims = jwtUtil.extractAllClaims(token);
+        Object rolesObj = claims.get("roles");
+
+        if (rolesObj instanceof List<?>) {
+            return ((List<?>) rolesObj).stream()
+                    .map(Object::toString) // Asegura que los elementos sean Strings
+                    .collect(Collectors.toList());
+        }
+        return List.of();
+    }
+
+
+
 }
 

@@ -36,7 +36,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // 🔹 Cambiado de hasRole a hasAuthority
                         .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_ADMIN") // 🔹 Cambiado de hasRole a hasAuthority
                         .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN") /// 🔹 Cambiado de hasRole a hasAuthority
-                        .requestMatchers("api/carrito/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
+                        .requestMatchers("/api/carrito/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())

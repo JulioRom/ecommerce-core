@@ -2,6 +2,7 @@ package com.springproject.ecommercecore.service;
 
 import com.springproject.ecommercecore.dataaccess.OrdenCompraDataAccess;
 import com.springproject.ecommercecore.dataaccess.UsuarioDataAccess;
+import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.OrdenCompra;
 import com.springproject.ecommercecore.model.postgresql.Usuario;
 import lombok.RequiredArgsConstructor;
@@ -25,7 +26,7 @@ public class CompraService {
     @Transactional
     public OrdenCompra generarOrden(Integer usuarioId, LocalDateTime fechaSolicitada) {
         Usuario usuario = usuarioDataAccess.buscarPorId(usuarioId)
-                .orElseThrow(() -> new IllegalArgumentException("Usuario no encontrado"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Usuario no encontrado"));
 
         OrdenCompra orden = new OrdenCompra(usuario, fechaSolicitada);
         return ordenCompraDataAccess.guardarOrden(orden);
@@ -37,7 +38,7 @@ public class CompraService {
     @Transactional
     public OrdenCompra actualizarEstadoOrden(Integer ordenId, OrdenCompra.EstadoOrden nuevoEstado) {
         OrdenCompra orden = ordenCompraDataAccess.buscarPorId(ordenId)
-                .orElseThrow(() -> new IllegalArgumentException("Orden de compra no encontrada"));
+                .orElseThrow(() -> new RecursoNoEncontradoException("Orden de compra no encontrada"));
 
         orden.setEstado(nuevoEstado);
         if (nuevoEstado == OrdenCompra.EstadoOrden.ENTREGADO) {

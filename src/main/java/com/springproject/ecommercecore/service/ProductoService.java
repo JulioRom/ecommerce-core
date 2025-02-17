@@ -1,6 +1,7 @@
 package com.springproject.ecommercecore.service;
 
 import com.springproject.ecommercecore.dataaccess.ProductoDataAccess;
+import com.springproject.ecommercecore.exception.RecursoExistenteException;
 import com.springproject.ecommercecore.exception.RecursoNoEncontradoException;
 import com.springproject.ecommercecore.model.postgresql.Producto;
 import lombok.RequiredArgsConstructor;
@@ -26,24 +27,34 @@ public class ProductoService {
     /**
      * Buscar un producto por su código.
      */
-    public Optional<Producto> buscarPorCodigo(String codigoProducto) {
-        return productoDataAccess.buscarPorCodigo(codigoProducto);
+    public Producto buscarPorCodigo(String codigoProducto) {
+        return productoDataAccess.buscarPorCodigo(codigoProducto)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto con código " + codigoProducto + " no encontrado"));
     }
+
 
     /**
      * Descontar stock de un producto.
      */
     @Transactional
-    public boolean actualizarStock(String codigoProducto, int cantidad) {
+    public Producto actualizarStock(String codigoProducto, int cantidad) {
+        Producto productoExistente = productoDataAccess.buscarPorCodigo(codigoProducto)
+                .orElseThrow(() -> new RecursoNoEncontradoException("Producto con código " + codigoProducto + " no encontrado"));
+
         return productoDataAccess.descontarStock(codigoProducto, cantidad);
     }
+
 
     /**
      * Guardar un nuevo producto.
      */
     public Producto guardarProducto(Producto producto) {
+        if (productoDataAccess.buscarPorCodigo(producto.getCodigoProducto()).isPresent()) {
+            throw new RecursoExistenteException("El código del producto ya existe");
+        }
         return productoDataAccess.guardarProducto(producto);
     }
+
 
     /**
      * Actualizar un producto existente.

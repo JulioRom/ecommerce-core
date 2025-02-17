@@ -43,4 +43,14 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(response);
     }
 
+    @ExceptionHandler(RecursoExistenteException.class)
+    public ResponseEntity<Map<String, Object>> handleRecursoExistenteException(RecursoExistenteException ex) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("mensaje", ex.getMessage()); // Mensaje de error
+        response.put("error", "Conflict"); // Tipo de error
+        response.put("status", HttpStatus.CONFLICT.value()); // Código HTTP 409
+
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(response);
+    }
+
 }
