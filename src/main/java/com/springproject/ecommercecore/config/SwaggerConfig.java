@@ -16,9 +16,11 @@ public class SwaggerConfig {
     public OpenAPI customOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
-                        .title("Ecommerce API")
+                        .title("Ecommerce Core API")
                         .version("1.0")
-                        .description("Documentación de la API | Proyecto de e-commerce"))
-                .servers(List.of(new Server().url("https://ecommerce-core-production.up.railway.app").description("Servidor de Producción")));
+                        .description("Documentación de la API de Ecommerce Core"))
+                .servers(List.of(
+                        new Server().url("https://ecommerce-core-production.up.railway.app")
+                ));
     }
 }
