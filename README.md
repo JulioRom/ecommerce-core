@@ -21,7 +21,6 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 - **MongoDB** (Gestión del carrito de compras)
 - **Jakarta Validation** - Validaciones de datos
 - **Lombok** - Reducción de código repetitivo
-- **MapStruct** - Mapeo de DTOs
 - **Swagger OpenAPI** - Documentación de la API
 - **JUnit 5 & Mockito** - Pruebas unitarias e integración
 - **Docker & Docker Compose** - Contenerización del sistema
@@ -33,7 +32,7 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
 
 1. Clonar el repositorio:
    ```sh
-   git clone https://github.com/tu-repo/ecommerce-api.git
+   git clone https://github.com/JulioRom/ecommerce-core.git
    cd ecommerce-api
    ```
 2. Configurar el archivo `.env` o `application.yml` con las credenciales de BD.
