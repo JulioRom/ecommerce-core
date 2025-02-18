@@ -159,12 +159,24 @@ http://localhost:8080/v3/api-docs
 http://localhost:8080/v3/api-docs.yaml
 ```
 ---
-### 🔗 **Acceder a Swagger UI**
-Puedes acceder a la documentación de la API desplegada en Railway desde el siguiente enlace:
+## 🚀 🔥 ¡Explora la API en Vivo con Swagger UI! 🔥 🚀
 
-👉 [Swagger UI - Ecommerce Core API](https://ecommerce-core-production.up.railway.app/swagger-ui.html)
+🔎 **¿Quieres probar la API en acción?** Hemos implementado una documentación interactiva donde puedes explorar todos los endpoints, hacer peticiones en tiempo real y probar autenticación con JWT.
+
+✨ **Accede ahora y experimenta la API en acción:**  
+🔗 **[👉 Swagger UI - Ecommerce Core API 👈](https://ecommerce-core-production.up.railway.app/swagger-ui.html)**
+
+📌 **Desde Swagger UI puedes:**
+- 📄 Ver toda la documentación de los endpoints.
+- 🔑 Autenticarse con JWT y probar endpoints protegidos.
+- 🚀 Hacer solicitudes **GET, POST, PUT, DELETE** directamente desde el navegador.
+- 🔥 Ver respuestas en tiempo real de la API en producción.
+
+⚡ **¡Haz clic y empieza a explorar la API en vivo ahora!** 👇  
+[![Swagger UI](https://img.shields.io/badge/Swagger-UI-green?style=for-the-badge&logo=swagger)](https://ecommerce-core-production.up.railway.app/swagger-ui.html)
 
 ---
+
 
 ### 🔑 **Autenticación en Swagger**
 Para probar los endpoints protegidos, sigue estos pasos:
