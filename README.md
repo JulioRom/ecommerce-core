@@ -158,25 +158,34 @@ http://localhost:8080/v3/api-docs
 ```url
 http://localhost:8080/v3/api-docs.yaml
 ```
+
 ---
-## 🚀 🔥 ¡Explora la API en Vivo con Swagger UI! 🔥 🚀
 
-🔎 **¿Quieres probar la API en acción?** Hemos implementado una documentación interactiva donde puedes explorar todos los endpoints, hacer peticiones en tiempo real y probar autenticación con JWT.
+# 🚀🔥 ¡Descubre la API en Acción con Swagger UI! 🔥🚀
+💡 **¿Listo para explorar la API como un PRO?** Hemos implementado una **documentación interactiva** donde puedes probar todos los endpoints, enviar solicitudes en tiempo real y autenticarte con JWT.
 
-✨ **Accede ahora y experimenta la API en acción:**  
-🔗 **[👉 Swagger UI - Ecommerce Core API 👈](https://ecommerce-core-production.up.railway.app/swagger-ui.html)**
+📌 **¡No te quedes con la teoría, pruébala ahora mismo!** 👇👇
 
-📌 **Desde Swagger UI puedes:**
-- 📄 Ver toda la documentación de los endpoints.
-- 🔑 Autenticarse con JWT y probar endpoints protegidos.
-- 🚀 Hacer solicitudes **GET, POST, PUT, DELETE** directamente desde el navegador.
-- 🔥 Ver respuestas en tiempo real de la API en producción.
+## 🌍 **Accede a Swagger UI en vivo:**
+🎯 **[👉 Swagger UI - Ecommerce Core API 👈](https://ecommerce-core-production.up.railway.app/swagger-ui.html)** 🎯
 
-⚡ **¡Haz clic y empieza a explorar la API en vivo ahora!** 👇  
+---
+
+## 🎯 **¿Qué puedes hacer en Swagger UI?**
+✅ 📄 **Ver toda la documentación de la API** en una interfaz intuitiva.  
+✅ 🔑 **Autenticarse con JWT** y probar endpoints protegidos de forma segura.  
+✅ 🚀 **Hacer solicitudes GET, POST, PUT, DELETE** con un solo clic.  
+✅ 📡 **Obtener respuestas en tiempo real** directamente desde el backend en producción.  
+✅ 💡 **Descubrir y probar nuevas funcionalidades** sin escribir código.
+
+> **🔥 TIP:** Inicia sesión primero para obtener el token y úsalo en los endpoints protegidos.
+
+---
+
+### 🔥 **¡No esperes más! Haz clic y explora la API en vivo ahora mismo:**
 [![Swagger UI](https://img.shields.io/badge/Swagger-UI-green?style=for-the-badge&logo=swagger)](https://ecommerce-core-production.up.railway.app/swagger-ui.html)
 
 ---
-
 
 ### 🔑 **Autenticación en Swagger**
 Para probar los endpoints protegidos, sigue estos pasos:
