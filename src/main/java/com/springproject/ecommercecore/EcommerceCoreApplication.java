@@ -16,7 +16,7 @@ public class EcommerceCoreApplication {
             dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
             System.out.println("Cargando variables desde .env (Entorno de Desarrollo)");
         } else {
-            System.out.println("Usando variables del sistema (Entorno de Producción)");
+            System.out.println("Usando variables del sistema (Entorno de Production)");
         }
 
         SpringApplication.run(EcommerceCoreApplication.class, args);
