@@ -3,8 +3,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-.env
-.env.example.railway
+
 
 
 ### STS ###
@@ -15,6 +14,8 @@ target/
 .settings
 .springBeans
 .sts4-cache
+.env
+.env.example.railway
 
 ### IntelliJ IDEA ###
 .idea
