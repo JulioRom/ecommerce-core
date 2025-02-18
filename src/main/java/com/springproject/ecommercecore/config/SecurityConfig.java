@@ -64,7 +64,7 @@ public class SecurityConfig {
         // Imprimir en logs para depuración
         System.out.println("🚀 CORS_ALLOWED_ORIGINS configurado como: " + allowedOrigins);
 
-        configuration.setAllowedOrigins(List.of(allowedOrigins));
+        configuration.setAllowedOrigins(List.of(allowedOrigins,"https://ecommerce-core-production.up.railway.app", "https://editor.swagger.io"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
