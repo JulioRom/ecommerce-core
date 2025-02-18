@@ -38,13 +38,14 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Habilitar CORS
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // Permitir todas las solicitudes OPTIONS
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger-ui/**","/v3/api-docs/**","/swagger-ui.html").permitAll()
-                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll() // Permitir login y registro
-                        .requestMatchers("/api/test", "/api/test/**").permitAll() // Permitir los endpoints de prueba
-                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN") // Cambiado de hasRole a hasAuthority
-                        .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_ADMIN") // Cambiado de hasRole a hasAuthority
-                        .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN") /// Cambiado de hasRole a hasAuthority
+                        .requestMatchers("/api/auth/login", "/api/auth/register").permitAll()
+                        .requestMatchers("/api/test", "/api/test/**").permitAll()
+                        .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/compras/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers("/api/carrito/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()
                 )
