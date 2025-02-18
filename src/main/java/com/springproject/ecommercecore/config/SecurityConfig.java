@@ -54,9 +54,14 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(List.of(System.getenv("CORS_ALLOWED_ORIGINS") != null
+        String allowedOrigins = System.getenv("CORS_ALLOWED_ORIGINS") != null
                 ? System.getenv("CORS_ALLOWED_ORIGINS")
-                : "https://ecommerce-core-production.up.railway.app")); // Usa la variable de entorno o valor por defecto
+                : "https://ecommerce-core-production.up.railway.app";
+
+        // Imprimir en logs para depuración
+        System.out.println("🚀 CORS_ALLOWED_ORIGINS configurado como: " + allowedOrigins);
+
+        configuration.setAllowedOrigins(List.of(allowedOrigins));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("*"));
         configuration.setAllowCredentials(true);
