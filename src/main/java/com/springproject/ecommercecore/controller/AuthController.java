@@ -17,9 +17,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Autenticación", description = "Operaciones relacionadas con la autenticación de usuarios")
 @RestController
 @RequestMapping("/api/auth")
+@Tag(name = "Autenticación", description = "Operaciones relacionadas con la autenticación de usuarios")
 @RequiredArgsConstructor
 public class AuthController {
 

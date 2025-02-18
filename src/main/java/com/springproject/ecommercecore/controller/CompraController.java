@@ -16,9 +16,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Compras", description = "Operaciones relacionadas con la gestión de compras")
 @RestController
 @RequestMapping("/api/compras")
+@Tag(name = "Compras", description = "Operaciones relacionadas con la gestión de compras")
 @RequiredArgsConstructor
 @SecurityRequirement(name = "bearerAuth")
 public class CompraController {

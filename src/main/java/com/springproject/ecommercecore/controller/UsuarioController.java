@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@Tag(name = "Usuarios", description = "Operaciones relacionadas con la gestión de usuarios")
 @RestController
 @RequestMapping("/api/usuarios")
-@RequiredArgsConstructor
+@Tag(name = "Usuarios", description = "Operaciones relacionadas con la gestión de usuarios")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 @Validated
 public class UsuarioController {
 

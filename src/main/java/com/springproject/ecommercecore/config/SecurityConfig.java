@@ -44,7 +44,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/test", "/api/test/**").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/usuarios/**").hasAuthority("ROLE_ADMIN")
-                        .requestMatchers("/api/productos/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/productos/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers("/api/compras/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers("/api/carrito/**").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .anyRequest().authenticated()

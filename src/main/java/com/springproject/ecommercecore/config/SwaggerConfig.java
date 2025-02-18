@@ -22,13 +22,14 @@ public class SwaggerConfig {
                         .version("1.0")
                         .description("Documentación de la API de Ecommerce Core"))
                 .servers(List.of(
-                        new Server().url("https://ecommerce-core-production.up.railway.app")
+                        new Server().url("https://ecommerce-core-production.up.railway.app"),
+                        new Server().url("http://localhost:8080")
                 ))
-                .addSecurityItem(new SecurityRequirement().addList("BearerAuth")) // Exigir autenticación en Swagger
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth")) // Exigir autenticación en Swagger
                 .components(new Components()
-                        .addSecuritySchemes("BearerAuth",
+                        .addSecuritySchemes("bearerAuth",
                                 new SecurityScheme()
-                                        .name("BearerAuth")
+                                        .name("bearerAuth")
                                         .type(SecurityScheme.Type.HTTP)
                                         .scheme("bearer")
                                         .bearerFormat("JWT") // Definir formato de token JWT

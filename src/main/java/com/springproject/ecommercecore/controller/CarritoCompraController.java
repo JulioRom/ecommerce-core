@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Tag(name = "Carrito de Compras", description = "Operaciones relacionadas con el carrito de compras")
 @RestController
 @RequestMapping("/api/carrito")
-@RequiredArgsConstructor
+@Tag(name = "Carrito de Compras", description = "Operaciones relacionadas con el carrito de compras")
 @SecurityRequirement(name = "bearerAuth")
+@RequiredArgsConstructor
 public class CarritoCompraController {
     private final CarritoCompraService carritoCompraService;
 
