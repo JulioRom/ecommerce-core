@@ -76,6 +76,38 @@ Este proyecto utiliza un archivo `.env` para almacenar configuraciones sensibles
 | `PUT`  | `/api/usuarios/{username}` | Actualizar usuario |
 | `DELETE` | `/api/usuarios/{id}` | Eliminar usuario (ADMIN) |
 
+### **Productos**
+| Método  | Endpoint                | Descripción |
+|---------|-------------------------|-------------|
+| `GET`   | `/api/productos`        | Listar productos |
+| `GET`   | `/api/productos/{codigoProducto}` | Obtener producto por código |
+| `POST`  | `/api/productos`        | Agregar producto (ADMIN) |
+| `PUT`   | `/api/productos/{codigoProducto}` | Actualizar producto (ADMIN) |
+| `DELETE`| `/api/productos/{codigoProducto}` | Eliminar producto (ADMIN) |
+
+### **Compras**
+| Método  | Endpoint                        | Descripción |
+|---------|---------------------------------|-------------|
+| `POST`  | `/api/compras/{idUsuario}`      | Generar una nueva compra |
+| `GET`   | `/api/compras/usuario/id/{idUsuario}` | Obtener órdenes de un usuario por ID |
+| `GET`   | `/api/compras/usuario/username/{username}` | Obtener órdenes de un usuario por username |
+| `GET`   | `/api/compras/{idOrden}`        | Obtener una orden de compra por ID |
+| `PUT`   | `/api/compras/{idOrden}/estado` | Actualizar el estado de una orden (ADMIN) |
+| `DELETE`| `/api/compras/{idOrden}/cancelar` | Cancelar una orden de compra |
+
+### **Carrito de Compras**
+| Método  | Endpoint                         | Descripción |
+|---------|----------------------------------|-------------|
+| `POST`  | `/api/carrito/{identificador}`   | Agregar producto al carrito |
+| `GET`   | `/api/carrito/{identificador}`   | Obtener el carrito de un usuario |
+| `DELETE`| `/api/carrito/{identificador}/{codigoProducto}` | Eliminar un producto del carrito |
+| `DELETE`| `/api/carrito/{identificador}`   | Vaciar el carrito de compras |
+
+### **Pruebas y CORS**
+| Método  | Endpoint        | Descripción |
+|---------|---------------|-------------|
+| `GET`   | `/api/test`   | Prueba de conexión con el backend |
+| `OPTIONS` | `/api/test` | Verificar si CORS está habilitado |
 ---
 
 ## 🔒 Autenticación y Seguridad
@@ -126,6 +158,70 @@ http://localhost:8080/v3/api-docs
 ```url
 http://localhost:8080/v3/api-docs.yaml
 ```
+---
+### 🔗 **Acceder a Swagger UI**
+Puedes acceder a la documentación de la API desplegada en Railway desde el siguiente enlace:
+
+👉 [Swagger UI - Ecommerce Core API](https://ecommerce-core-production.up.railway.app/swagger-ui.html)
+
+---
+
+### 🔑 **Autenticación en Swagger**
+Para probar los endpoints protegidos, sigue estos pasos:
+
+1. **Ir a la sección "Authorize"** en Swagger UI.
+2. **Ingresar el token con el prefijo `Bearer`**, ejemplo:
+   ```
+   Bearer tu_token_aquí
+   ```
+3. **Hacer clic en "Authorize" y cerrar la ventana.**
+4. **Ahora podrás probar los endpoints protegidos.**
+
+📌 **Importante:**  
+Para obtener un token, primero debes autenticarte usando el endpoint `/api/auth/login`, enviando las credenciales en el cuerpo de la solicitud.
+
+---
+
+## 🔧 **Configuración y Ejecución en Local**
+### 📌 **Requisitos**
+- Java 17+
+- Maven
+- Docker (opcional, para bases de datos)
+
+### 🚀 **Ejecutar el Proyecto en Local**
+```bash
+# Clonar el repositorio
+git clone https://github.com/JulioRom/ecommerce-core
+cd tu-repositorio
+
+# Configurar el perfil de desarrollo
+export SPRING_PROFILES_ACTIVE=dev  # Linux/macOS
+set SPRING_PROFILES_ACTIVE=dev      # Windows
+
+# Ejecutar con Maven
+mvn spring-boot:run
+```
+
+### 🛠 **Variables de Entorno**
+Crea un archivo `.env` en la raíz del proyecto con las siguientes variables (para desarrollo):
+
+```env
+DATABASE_URL=jdbc:postgresql://localhost:5432/ecommerce
+DATABASE_USER=admin
+DATABASE_PASSWORD=admin
+MONGODB_URI=mongodb://localhost:27017/ecommerce
+JWT_SECRET=ClaveSecretaDesarrollo
+JWT_EXPIRATION=3600000
+CORS_ALLOWED_ORIGINS=http://localhost:3000
+```
+
+---
+
+## 📦 **Despliegue en Producción**
+Este proyecto está desplegado en **Railway**, donde Swagger UI está disponible para probar los endpoints.
+
+🔹 **Railway maneja las variables de entorno en la sección "Variables".**  
+🔹 **No es necesario un archivo `.env` en producción.**
 
 ---
 
