@@ -4,6 +4,8 @@ import com.springproject.ecommercecore.dataaccess.UsuarioDataAccess;
 import com.springproject.ecommercecore.model.postgresql.Usuario;
 import com.springproject.ecommercecore.security.dto.AuthRequest;
 import com.springproject.ecommercecore.security.dto.AuthResponse;
+import io.github.cdimascio.dotenv.Dotenv;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,6 +14,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Set;
@@ -20,7 +23,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestPropertySource(locations = "classpath:test.env")
 class AuthServiceIntegrationTest {
+
+    @BeforeAll
+    static void loadEnv() {
+        Dotenv dotenv = Dotenv.configure().directory("src/test/resources").ignoreIfMissing().load();
+        dotenv.entries().forEach(entry -> System.setProperty(entry.getKey(), entry.getValue()));
+    }
 
     @Autowired
     private TestRestTemplate restTemplate;
@@ -43,6 +53,12 @@ class AuthServiceIntegrationTest {
                 }
         );
     }
+
+    @Test
+    void testEnvLoaded() {
+        System.out.println("DATABASE_URL: " + System.getenv("DATABASE_URL"));
+    }
+
     /**
      * Prueba de integración para verificar si `AuthService` permite autenticar un usuario con credenciales correctas.
      * Se realiza una solicitud POST a `/api/auth/login` con credenciales válidas.

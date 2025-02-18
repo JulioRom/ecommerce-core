@@ -47,6 +47,18 @@ Ecommerce API es un backend desarrollado en **Spring Boot** para la gestión de 
    ```
 ---
 
+## 🚀 Configuración de Variables de Entorno
+
+Este proyecto utiliza un archivo `.env` para almacenar configuraciones sensibles. **Por seguridad, el archivo `.env` no se incluye en el repositorio**. Sigue estos pasos para configurarlo:
+
+1. **Copia el archivo de referencia:**
+   cp .env.example .env
+2. **Edita el archivo `.env` y completa los valores según tu entorno.**
+
+📌 **Importante:** Nunca subas el archivo `.env` al repositorio, ya que contiene información sensible.
+
+---
+
 ## 🔥 Endpoints Principales
 
 ### **Autenticación**
